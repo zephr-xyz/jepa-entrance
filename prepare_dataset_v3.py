@@ -397,6 +397,27 @@ def main():
             np.save(sample_dir / f'facade_t_cols_{k}.npy', ft_cols)
             np.save(sample_dir / f'camera_pose_{k}.npy', pose)
 
+        # Save image metadata for ray-tracing at evaluation time
+        img_meta_list = []
+        for k, (img_id_str, feat) in enumerate(image_data):
+            meta = feat['metadata']
+            cam_type = meta.get('camera_type', 'perspective')
+            cam_params = meta.get('camera_parameters', [0.5, 0, 0])
+            img_w = meta.get('width', 4032)
+            img_h = meta.get('height', 3024)
+            img_meta_list.append({
+                'image_id': img_id_str,
+                'cam_lat': meta['geometry']['lat'],
+                'cam_lon': meta['geometry']['lng'],
+                'cam_compass': meta.get('compass_angle', 0.0),
+                'cam_type': cam_type,
+                'hfov': camera_hfov_deg(cam_params, cam_type, img_w, img_h),
+                'width': img_w,
+                'height': img_h,
+            })
+        with open(sample_dir / 'image_meta.json', 'w') as f:
+            json.dump(img_meta_list, f)
+
         manifest.append({
             'sample_id': sample_id,
             'poi_id': poi['id'],

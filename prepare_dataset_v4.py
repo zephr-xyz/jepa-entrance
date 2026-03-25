@@ -1,9 +1,11 @@
 """
-Prepare v3 dataset with SINGLE-EDGE facade (for comparison with composite).
+Prepare v4 dataset for entrance detection model.
 
-Same as prepare_dataset_v3.py but uses the original single-edge facade
-detection from dataset.py instead of composite facade. All 72 RTK samples
-go to validation for apples-to-apples comparison.
+For each POI + image, computes:
+  - Patch strip (16×1024) — same as v3
+  - Camera pose (6-dim) — relative to building centroid, no facade needed
+  - Ground truth entrance column — which image column the entrance falls in
+  - Visibility flag — whether entrance is within camera FOV
 """
 import argparse
 import json
@@ -15,11 +17,10 @@ import boto3
 from io import BytesIO
 from pathlib import Path
 
-from dataset import compute_facade_and_entrance_t
 from geometry import (
     camera_hfov_deg,
-    compute_camera_pose_features,
-    compute_patch_column_facade_t,
+    compute_camera_pose_v4,
+    entrance_to_column,
 )
 
 DEG_TO_RAD = math.pi / 180
@@ -50,7 +51,6 @@ def load_embedding_tiles(tiles_dir):
                 'entrance_lon': wp['entrance_lon'],
                 'mapillary_ids': wp['mapillary_ids'],
                 'overture_building_id': wp['overture_building_id'],
-                'enclosing_roads': wp.get('enclosing_roads', []),
             })
     print(f"Loaded {len(all_pois)} POIs with entrances + mapillary + buildings")
     return all_pois
@@ -89,7 +89,6 @@ def fetch_image_features(s3_client, bucket, sequence_id, image_id):
     for key in patch_data:
         patches = patch_data[key]
         break
-
     if patches is None:
         return None
 
@@ -118,74 +117,7 @@ def fetch_image_features(s3_client, bucket, sequence_id, image_id):
     else:
         return None
 
-    return {
-        'patch_strip': patch_strip,
-        'metadata': metadata,
-    }
-
-
-def get_single_edge_facade_geometry(building_coords, entrance_lat, entrance_lon):
-    """Get single-edge facade geometry in local meters for camera pose computation.
-
-    Returns dict with facade_a_m, facade_b_m, midpoint_m, normal,
-    centroid_lat, centroid_lon, or None.
-    """
-    if len(building_coords) < 3:
-        return None
-
-    cent_lng = sum(c[0] for c in building_coords) / len(building_coords)
-    cent_lat = sum(c[1] for c in building_coords) / len(building_coords)
-    cos_lat = math.cos(cent_lat * DEG_TO_RAD)
-    m_per_deg_lng = METERS_PER_DEG_LAT * cos_lat
-
-    def to_m(coord):
-        return [(coord[0] - cent_lng) * m_per_deg_lng,
-                (coord[1] - cent_lat) * METERS_PER_DEG_LAT]
-
-    fp_m = [to_m(c) for c in building_coords]
-    ent_m = to_m([entrance_lon, entrance_lat])
-    poly_cx = sum(p[0] for p in fp_m) / len(fp_m)
-    poly_cy = sum(p[1] for p in fp_m) / len(fp_m)
-
-    best_edge = None
-    best_score = float('inf')
-
-    for i in range(len(fp_m) - 1):
-        a, b = fp_m[i], fp_m[i + 1]
-        edx, edy = b[0] - a[0], b[1] - a[1]
-        length = math.sqrt(edx * edx + edy * edy)
-        if length < 0.3:
-            continue
-
-        nx, ny = -edy / length, edx / length
-        mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
-        tcx, tcy = poly_cx - mx, poly_cy - my
-        if nx * tcx + ny * tcy > 0:
-            nx, ny = -nx, -ny
-
-        dx = ent_m[0] - mx
-        dy = ent_m[1] - my
-        dist = math.sqrt(dx * dx + dy * dy)
-
-        if dist < best_score:
-            best_score = dist
-            best_edge = {
-                'a': a, 'b': b, 'length': length,
-                'normal': [nx, ny],
-                'midpoint': [mx, my],
-            }
-
-    if best_edge is None:
-        return None
-
-    return {
-        'facade_a_m': best_edge['a'],
-        'facade_b_m': best_edge['b'],
-        'midpoint_m': best_edge['midpoint'],
-        'normal': best_edge['normal'],
-        'centroid_lat': cent_lat,
-        'centroid_lon': cent_lng,
-    }
+    return {'patch_strip': patch_strip, 'metadata': metadata}
 
 
 def main():
@@ -208,21 +140,18 @@ def main():
     pois = load_embedding_tiles(args.tiles_dir)
     buildings = load_buildings(args.buildings_json)
 
-    # Load corrections
     corrections = {}
     if args.corrections_json and os.path.exists(args.corrections_json):
         with open(args.corrections_json) as f:
             corrections = json.load(f)
         print(f"Loaded {len(corrections)} entrance corrections")
 
-    # Load RTK labels
     gt_labels = {}
     if args.ground_truth_labels and os.path.exists(args.ground_truth_labels):
         with open(args.ground_truth_labels) as f:
             gt_labels = json.load(f)
         print(f"Loaded {len(gt_labels)} RTK ground truth labels")
 
-    # Apply corrections then RTK labels
     rtk_poi_ids = set()
     for poi in pois:
         if poi['id'] in corrections:
@@ -238,7 +167,6 @@ def main():
             rtk_poi_ids.add(poi['id'])
     print(f"Applied RTK labels to {len(rtk_poi_ids)} POIs")
 
-    # S3 setup
     s3 = boto3.client('s3')
     seq_lookup = {}
     if args.s3_index_cache and os.path.exists(args.s3_index_cache):
@@ -250,7 +178,8 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = []
-    skipped = {'no_building': 0, 'no_facade': 0, 'no_s3': 0}
+    skipped = {'no_building': 0, 'no_s3': 0, 'no_visible': 0}
+    vis_stats = {'total_images': 0, 'visible_images': 0}
 
     for i, poi in enumerate(pois):
         if i % 100 == 0:
@@ -266,28 +195,13 @@ def main():
             skipped['no_building'] += 1
             continue
 
-        # zephr-maps uses [lat, lon], convert to [lon, lat]
         bld_lnglat = [[c[1], c[0]] for c in building_coords_raw]
 
-        # Compute single-edge facade features and entrance_t
-        facade_feats, entrance_t = compute_facade_and_entrance_t(
-            bld_lnglat,
-            poi['entrance_lat'], poi['entrance_lon'],
-            poi.get('enclosing_roads', []),
-        )
-        if facade_feats is None:
-            skipped['no_facade'] += 1
-            continue
+        # Building centroid
+        cent_lng = sum(c[0] for c in bld_lnglat) / len(bld_lnglat)
+        cent_lat = sum(c[1] for c in bld_lnglat) / len(bld_lnglat)
 
-        # Get single-edge facade geometry for camera pose and per-column facade_t
-        facade_geom = get_single_edge_facade_geometry(
-            bld_lnglat, poi['entrance_lat'], poi['entrance_lon']
-        )
-        if facade_geom is None:
-            skipped['no_facade'] += 1
-            continue
-
-        # Fetch features for up to K images
+        # Fetch image features
         image_data = []
         for img_id in poi['mapillary_ids']:
             if len(image_data) >= args.max_images_per_poi:
@@ -304,14 +218,11 @@ def main():
             skipped['no_s3'] += 1
             continue
 
-        # Save sample
-        sample_id = f"v3se_poi_{poi['id'][:8]}"
-        sample_dir = output_dir / sample_id
-        sample_dir.mkdir(exist_ok=True)
+        # Check if at least one image has the entrance visible
+        any_visible = False
+        image_metas = []
 
-        np.save(sample_dir / 'facade_feats.npy', facade_feats)
-
-        for k, (img_id_str, feat) in enumerate(image_data):
+        for img_id_str, feat in image_data:
             meta = feat['metadata']
             cam_lat = meta['geometry']['lat']
             cam_lon = meta['geometry']['lng']
@@ -320,49 +231,52 @@ def main():
             cam_params = meta.get('camera_parameters', [0.5, 0, 0])
             img_w = meta.get('width', 4032)
             img_h = meta.get('height', 3024)
-
             hfov = camera_hfov_deg(cam_params, cam_type, img_w, img_h)
 
-            # Camera pose features (single edge)
-            pose = compute_camera_pose_features(
+            col, visible, dist_m = entrance_to_column(
                 cam_lat, cam_lon, cam_compass, hfov,
-                facade_geom['facade_a_m'], facade_geom['facade_b_m'],
-                facade_geom['midpoint_m'], facade_geom['normal'],
-                facade_geom['centroid_lat'], facade_geom['centroid_lon'],
-            )
-
-            # Per-column facade_t (single edge)
-            ft_cols = compute_patch_column_facade_t(
-                cam_lat, cam_lon, cam_compass, hfov,
-                facade_geom['facade_a_m'], facade_geom['facade_b_m'],
-                facade_geom['centroid_lat'], facade_geom['centroid_lon'],
+                poi['entrance_lat'], poi['entrance_lon'],
                 n_cols=N_COLS, camera_type=cam_type,
             )
 
+            vis_stats['total_images'] += 1
+            if visible:
+                vis_stats['visible_images'] += 1
+                any_visible = True
+
+            image_metas.append({
+                'cam_lat': cam_lat, 'cam_lon': cam_lon,
+                'cam_compass': cam_compass, 'cam_type': cam_type,
+                'hfov': hfov,
+                'entrance_col': float(col),
+                'visible': bool(visible),
+                'dist_m': float(dist_m),
+            })
+
+        if not any_visible:
+            skipped['no_visible'] += 1
+            continue
+
+        # Save sample
+        sample_id = f"v4_poi_{poi['id'][:8]}"
+        sample_dir = output_dir / sample_id
+        sample_dir.mkdir(exist_ok=True)
+
+        for k, (img_id_str, feat) in enumerate(image_data):
+            m = image_metas[k]
+
+            # Camera pose (6-dim, relative to building centroid)
+            pose = compute_camera_pose_v4(
+                m['cam_lat'], m['cam_lon'], m['cam_compass'], m['hfov'],
+                cent_lat, cent_lng,
+            )
+
             np.save(sample_dir / f'patch_strip_{k}.npy', feat['patch_strip'])
-            np.save(sample_dir / f'facade_t_cols_{k}.npy', ft_cols)
             np.save(sample_dir / f'camera_pose_{k}.npy', pose)
 
-        # Save image metadata for evaluation
-        img_meta_list = []
-        for k, (img_id_str, feat) in enumerate(image_data):
-            meta = feat['metadata']
-            cam_type = meta.get('camera_type', 'perspective')
-            cam_params = meta.get('camera_parameters', [0.5, 0, 0])
-            img_w = meta.get('width', 4032)
-            img_h = meta.get('height', 3024)
-            img_meta_list.append({
-                'image_id': img_id_str,
-                'cam_lat': meta['geometry']['lat'],
-                'cam_lon': meta['geometry']['lng'],
-                'cam_compass': meta.get('compass_angle', 0.0),
-                'cam_type': cam_type,
-                'hfov': camera_hfov_deg(cam_params, cam_type, img_w, img_h),
-                'width': img_w,
-                'height': img_h,
-            })
+        # Save per-image metadata (columns, visibility)
         with open(sample_dir / 'image_meta.json', 'w') as f:
-            json.dump(img_meta_list, f)
+            json.dump(image_metas, f)
 
         manifest.append({
             'sample_id': sample_id,
@@ -370,30 +284,33 @@ def main():
             'poi_name': poi['name'],
             'n_images': len(image_data),
             'image_ids': [d[0] for d in image_data],
-            'entrance_t': float(entrance_t),
             'entrance_lat': poi['entrance_lat'],
             'entrance_lon': poi['entrance_lon'],
             'building_id': bld_id,
-            'facade_length_m': float(facade_feats[4]),
+            'building_centroid_lat': cent_lat,
+            'building_centroid_lon': cent_lng,
             'has_rtk_label': poi.get('has_rtk_label', False),
             'rtk_source': poi.get('rtk_source', ''),
+            'n_visible_images': sum(1 for m in image_metas if m['visible']),
             'n_total_images': len(poi.get('mapillary_ids', [])),
         })
 
         if (i + 1) % 50 == 0:
             print(f"  Cached {len(manifest)} samples so far")
 
-    print(f"\nDataset v3-singleedge preparation complete:")
+    print(f"\nDataset v4 preparation complete:")
     print(f"  Total samples: {len(manifest)}")
     print(f"  Skipped - no building: {skipped['no_building']}")
-    print(f"  Skipped - no facade: {skipped['no_facade']}")
     print(f"  Skipped - no S3 data: {skipped['no_s3']}")
+    print(f"  Skipped - no visible images: {skipped['no_visible']}")
+    print(f"  Images: {vis_stats['visible_images']}/{vis_stats['total_images']} "
+          f"visible ({100*vis_stats['visible_images']/max(vis_stats['total_images'],1):.0f}%)")
 
     img_counts = [m['n_images'] for m in manifest]
     print(f"  Images per POI: mean={np.mean(img_counts):.1f}, "
           f"median={np.median(img_counts):.0f}, max={max(img_counts)}")
 
-    # Split: ALL RTK to val, non-RTK split by val_fraction
+    # Split: all RTK to val, non-RTK split by val_fraction
     rtk_samples = [m for m in manifest if m.get('has_rtk_label', False)]
     non_rtk_samples = [m for m in manifest if not m.get('has_rtk_label', False)]
     random.shuffle(non_rtk_samples)
