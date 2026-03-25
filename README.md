@@ -8,7 +8,7 @@ Given a building and its associated Mapillary images, the model predicts where t
 
 ### Key Results
 
-Evaluated on 72 POIs with RTK-precision ground truth (centimeter-level GPS measurements of actual front door locations) in Louisville, KY and Boulder, CO:
+Evaluated on 72 POIs with RTK-precision ground truth (centimeter-level GPS measurements of actual front door locations) in Louisville, CO and Boulder, CO:
 
 | Metric | Along-facade (1D) | Geographic (2D) |
 |--------|:-----------------:|:---------------:|
@@ -173,7 +173,7 @@ Training takes ~7 minutes on an NVIDIA A10G (g5.xlarge).
 ## Ground Truth
 
 RTK ground truth was collected via field surveys using centimeter-precision GPS:
-- **Louisville, KY**: 41 POIs along main commercial corridors
+- **Louisville, CO**: 41 POIs along main commercial corridors
 - **Boulder, CO**: 31 POIs on Pearl Street and surrounding areas
 
 Each measurement records the exact lat/lon/elevation of the building's front door. Matching to embedding-tile waypoints uses Overture building IDs (Louisville) or name + proximity matching (Boulder).
