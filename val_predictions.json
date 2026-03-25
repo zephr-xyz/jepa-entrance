@@ -1,0 +1,2412 @@
+[
+  {
+    "sample_id": "v3se_poi_cc9a34b0",
+    "poi_name": "Lulu's BBQ",
+    "has_rtk_label": true,
+    "t_pred": 0.6003695130348206,
+    "t_true": 0.5794209837913513,
+    "facade_length_m": 6.345813274383545,
+    "error_t": 0.02094852924346924,
+    "error_m": 0.13293544948101044
+  },
+  {
+    "sample_id": "v3se_poi_45bbbd10",
+    "poi_name": "Gemmill Library of Engineering, Mathematics and Physics",
+    "has_rtk_label": false,
+    "t_pred": 0.9877726435661316,
+    "t_true": 1.0,
+    "facade_length_m": 15.783297538757324,
+    "error_t": 0.012227356433868408,
+    "error_m": 0.19298800826072693
+  },
+  {
+    "sample_id": "v3se_poi_f8c0dc6e",
+    "poi_name": "Freebird Stores",
+    "has_rtk_label": true,
+    "t_pred": 0.26491042971611023,
+    "t_true": 0.7221587300300598,
+    "facade_length_m": 15.037766456604004,
+    "error_t": 0.4572483003139496,
+    "error_m": 6.875993251800537
+  },
+  {
+    "sample_id": "v3se_poi_0a4c75a1",
+    "poi_name": "Lolo Rugs and Gifts",
+    "has_rtk_label": true,
+    "t_pred": 0.7174356579780579,
+    "t_true": 0.7051364779472351,
+    "facade_length_m": 7.659592151641846,
+    "error_t": 0.012299180030822754,
+    "error_m": 0.09420670568943024
+  },
+  {
+    "sample_id": "v3se_poi_0ee63d4b",
+    "poi_name": "Louisville Community Park",
+    "has_rtk_label": false,
+    "t_pred": 0.9845153093338013,
+    "t_true": 1.0,
+    "facade_length_m": 8.104787826538086,
+    "error_t": 0.01548469066619873,
+    "error_m": 0.1255001276731491
+  },
+  {
+    "sample_id": "v3se_poi_34d37d9f",
+    "poi_name": "FNBO",
+    "has_rtk_label": false,
+    "t_pred": 0.9804984927177429,
+    "t_true": 1.0,
+    "facade_length_m": 3.974160671234131,
+    "error_t": 0.01950150728225708,
+    "error_m": 0.07750212401151657
+  },
+  {
+    "sample_id": "v3se_poi_81ca3d56",
+    "poi_name": "Trident Booksellers and Cafe",
+    "has_rtk_label": true,
+    "t_pred": 0.771334171295166,
+    "t_true": 0.22405341267585754,
+    "facade_length_m": 11.54063892364502,
+    "error_t": 0.5472807884216309,
+    "error_m": 6.315969944000244
+  },
+  {
+    "sample_id": "v3se_poi_e8b78abd",
+    "poi_name": "WinterSkate",
+    "has_rtk_label": false,
+    "t_pred": 0.49558109045028687,
+    "t_true": 1.0,
+    "facade_length_m": 1.2022559642791748,
+    "error_t": 0.5044189095497131,
+    "error_m": 0.6064406633377075
+  },
+  {
+    "sample_id": "v3se_poi_6610e954",
+    "poi_name": "Savvy on Pearl",
+    "has_rtk_label": true,
+    "t_pred": 0.11233657598495483,
+    "t_true": 0.11749542504549026,
+    "facade_length_m": 14.038182258605957,
+    "error_t": 0.005158849060535431,
+    "error_m": 0.0724208652973175
+  },
+  {
+    "sample_id": "v3se_poi_5fa4d9f1",
+    "poi_name": "Griffis 3100 Pearl",
+    "has_rtk_label": false,
+    "t_pred": 0.89239501953125,
+    "t_true": 0.8209848403930664,
+    "facade_length_m": 5.217933654785156,
+    "error_t": 0.0714101791381836,
+    "error_m": 0.3726135790348053
+  },
+  {
+    "sample_id": "v3se_poi_409e45ff",
+    "poi_name": "Chipotle Mexican Grill",
+    "has_rtk_label": false,
+    "t_pred": 0.0193175096064806,
+    "t_true": 0.0,
+    "facade_length_m": 20.709209442138672,
+    "error_t": 0.0193175096064806,
+    "error_m": 0.4000503420829773
+  },
+  {
+    "sample_id": "v3se_poi_190f4698",
+    "poi_name": "Boulder Wine Merchant",
+    "has_rtk_label": false,
+    "t_pred": 0.051315706223249435,
+    "t_true": 0.06707125902175903,
+    "facade_length_m": 12.579448699951172,
+    "error_t": 0.015755552798509598,
+    "error_m": 0.1981961727142334
+  },
+  {
+    "sample_id": "v3se_poi_c196ac1c",
+    "poi_name": "University Of Colorado Boulder Recreation Center",
+    "has_rtk_label": false,
+    "t_pred": 0.5904079079627991,
+    "t_true": 0.3374587595462799,
+    "facade_length_m": 10.333946228027344,
+    "error_t": 0.25294914841651917,
+    "error_m": 2.6139628887176514
+  },
+  {
+    "sample_id": "v3se_poi_09a38959",
+    "poi_name": "Evert Pierson Kids' Fishing Pond",
+    "has_rtk_label": false,
+    "t_pred": 0.9983081817626953,
+    "t_true": 1.0,
+    "facade_length_m": 8.655427932739258,
+    "error_t": 0.0016918182373046875,
+    "error_m": 0.0146434111520648
+  },
+  {
+    "sample_id": "v3se_poi_c7a9f7a6",
+    "poi_name": "Giovannitti Coffee Roasters",
+    "has_rtk_label": true,
+    "t_pred": 0.7723706960678101,
+    "t_true": 0.7399794459342957,
+    "facade_length_m": 16.38780403137207,
+    "error_t": 0.032391250133514404,
+    "error_m": 0.5308214426040649
+  },
+  {
+    "sample_id": "v3se_poi_f47f49b4",
+    "poi_name": "Starfish Jewelry",
+    "has_rtk_label": true,
+    "t_pred": 0.6598055362701416,
+    "t_true": 0.35001078248023987,
+    "facade_length_m": 15.026731491088867,
+    "error_t": 0.30979475378990173,
+    "error_m": 4.655202388763428
+  },
+  {
+    "sample_id": "v3se_poi_c8314a59",
+    "poi_name": "Native Roots Dispensary Boulder REC",
+    "has_rtk_label": true,
+    "t_pred": 0.4666725993156433,
+    "t_true": 0.43845880031585693,
+    "facade_length_m": 15.037766456604004,
+    "error_t": 0.028213798999786377,
+    "error_m": 0.4242725074291229
+  },
+  {
+    "sample_id": "v3se_poi_ebbcd40b",
+    "poi_name": "There With Care",
+    "has_rtk_label": false,
+    "t_pred": 0.9949624538421631,
+    "t_true": 1.0,
+    "facade_length_m": 17.074167251586914,
+    "error_t": 0.005037546157836914,
+    "error_m": 0.08601190894842148
+  },
+  {
+    "sample_id": "v3se_poi_8cec51dd",
+    "poi_name": "ALANB Bank",
+    "has_rtk_label": false,
+    "t_pred": 0.02274513803422451,
+    "t_true": 3.4766406315611675e-05,
+    "facade_length_m": 34.59181213378906,
+    "error_t": 0.022710371762514114,
+    "error_m": 0.7855929136276245
+  },
+  {
+    "sample_id": "v3se_poi_8ada5d81",
+    "poi_name": "The Huckleberry",
+    "has_rtk_label": true,
+    "t_pred": 0.9606092572212219,
+    "t_true": 0.9600918292999268,
+    "facade_length_m": 14.728528022766113,
+    "error_t": 0.000517427921295166,
+    "error_m": 0.007620951626449823
+  },
+  {
+    "sample_id": "v3se_poi_65a334dc",
+    "poi_name": "Tiffins Momo Corner",
+    "has_rtk_label": false,
+    "t_pred": 0.4342663288116455,
+    "t_true": 0.4097907245159149,
+    "facade_length_m": 18.927248001098633,
+    "error_t": 0.02447560429573059,
+    "error_m": 0.4632558226585388
+  },
+  {
+    "sample_id": "v3se_poi_5fbe8f56",
+    "poi_name": "Jiffy Lube",
+    "has_rtk_label": false,
+    "t_pred": 0.7157931923866272,
+    "t_true": 0.703082799911499,
+    "facade_length_m": 12.063758850097656,
+    "error_t": 0.012710392475128174,
+    "error_m": 0.1533351093530655
+  },
+  {
+    "sample_id": "v3se_poi_89e2cf44",
+    "poi_name": "FingerPlay Studio",
+    "has_rtk_label": true,
+    "t_pred": 0.4784979522228241,
+    "t_true": 0.5520820617675781,
+    "facade_length_m": 35.07616424560547,
+    "error_t": 0.07358410954475403,
+    "error_m": 2.5810482501983643
+  },
+  {
+    "sample_id": "v3se_poi_56c3d7b8",
+    "poi_name": "Southern Sun Pub & Brewery",
+    "has_rtk_label": false,
+    "t_pred": 0.3243018686771393,
+    "t_true": 0.32340580224990845,
+    "facade_length_m": 23.355342864990234,
+    "error_t": 0.000896066427230835,
+    "error_m": 0.02092793956398964
+  },
+  {
+    "sample_id": "v3se_poi_4d7a8a09",
+    "poi_name": "Conoco",
+    "has_rtk_label": false,
+    "t_pred": 0.4407799243927002,
+    "t_true": 0.47318199276924133,
+    "facade_length_m": 3.1512904167175293,
+    "error_t": 0.03240206837654114,
+    "error_m": 0.10210832953453064
+  },
+  {
+    "sample_id": "v3se_poi_2a45e713",
+    "poi_name": "Zeal",
+    "has_rtk_label": false,
+    "t_pred": 0.9282298684120178,
+    "t_true": 0.00040332970093004405,
+    "facade_length_m": 1.781673550605774,
+    "error_t": 0.9278265237808228,
+    "error_m": 1.6530839204788208
+  },
+  {
+    "sample_id": "v3se_poi_cdf80af6",
+    "poi_name": "Herbal Wellness",
+    "has_rtk_label": false,
+    "t_pred": 0.4823889136314392,
+    "t_true": 0.489393025636673,
+    "facade_length_m": 7.899167060852051,
+    "error_t": 0.007004112005233765,
+    "error_m": 0.05532665178179741
+  },
+  {
+    "sample_id": "v3se_poi_83da12ad",
+    "poi_name": "Eleanor",
+    "has_rtk_label": true,
+    "t_pred": 0.6037982106208801,
+    "t_true": 0.4913421869277954,
+    "facade_length_m": 4.0955986976623535,
+    "error_t": 0.11245602369308472,
+    "error_m": 0.460574746131897
+  },
+  {
+    "sample_id": "v3se_poi_c10dcde3",
+    "poi_name": "Crossfit Cielo",
+    "has_rtk_label": false,
+    "t_pred": 0.006881789304316044,
+    "t_true": 0.0,
+    "facade_length_m": 14.060042381286621,
+    "error_t": 0.006881789304316044,
+    "error_m": 0.09675824642181396
+  },
+  {
+    "sample_id": "v3se_poi_93205ed4",
+    "poi_name": "Santo",
+    "has_rtk_label": false,
+    "t_pred": 0.8861759305000305,
+    "t_true": 0.8764837384223938,
+    "facade_length_m": 11.942682266235352,
+    "error_t": 0.009692192077636719,
+    "error_m": 0.1157507672905922
+  },
+  {
+    "sample_id": "v3se_poi_ba283724",
+    "poi_name": "Planet Fitness",
+    "has_rtk_label": false,
+    "t_pred": 0.011090668849647045,
+    "t_true": 0.0,
+    "facade_length_m": 29.63020896911621,
+    "error_t": 0.011090668849647045,
+    "error_m": 0.3286188244819641
+  },
+  {
+    "sample_id": "v3se_poi_d82c5ddd",
+    "poi_name": "GNC Live Well",
+    "has_rtk_label": false,
+    "t_pred": 0.05402977392077446,
+    "t_true": 0.0,
+    "facade_length_m": 2.282059907913208,
+    "error_t": 0.05402977392077446,
+    "error_m": 0.12329918146133423
+  },
+  {
+    "sample_id": "v3se_poi_08f2f85e",
+    "poi_name": "Corden Pharma Colorado",
+    "has_rtk_label": false,
+    "t_pred": 0.9916609525680542,
+    "t_true": 1.0,
+    "facade_length_m": 6.5141119956970215,
+    "error_t": 0.0083390474319458,
+    "error_m": 0.05432149022817612
+  },
+  {
+    "sample_id": "v3se_poi_def277f6",
+    "poi_name": "Old Style Sausage",
+    "has_rtk_label": false,
+    "t_pred": 0.965427815914154,
+    "t_true": 2.100699703078135e-06,
+    "facade_length_m": 6.567929744720459,
+    "error_t": 0.9654257297515869,
+    "error_m": 6.340848445892334
+  },
+  {
+    "sample_id": "v3se_poi_52d62a66",
+    "poi_name": "Fjallraven Brand Store",
+    "has_rtk_label": true,
+    "t_pred": 0.9255205988883972,
+    "t_true": 1.0,
+    "facade_length_m": 42.177642822265625,
+    "error_t": 0.07447940111160278,
+    "error_m": 3.1413655281066895
+  },
+  {
+    "sample_id": "v3se_poi_f7670553",
+    "poi_name": "Accent Properties",
+    "has_rtk_label": false,
+    "t_pred": 0.5019350647926331,
+    "t_true": 0.4792920649051666,
+    "facade_length_m": 25.629413604736328,
+    "error_t": 0.02264299988746643,
+    "error_m": 0.5803267955780029
+  },
+  {
+    "sample_id": "v3se_poi_88a8acbe",
+    "poi_name": "Creekside Elementary School",
+    "has_rtk_label": false,
+    "t_pred": 0.1414099931716919,
+    "t_true": 0.0,
+    "facade_length_m": 2.803011894226074,
+    "error_t": 0.1414099931716919,
+    "error_m": 0.3963738977909088
+  },
+  {
+    "sample_id": "v3se_poi_2dfef5bc",
+    "poi_name": "East Boulder Park",
+    "has_rtk_label": false,
+    "t_pred": 0.014686085283756256,
+    "t_true": 0.0,
+    "facade_length_m": 7.714645862579346,
+    "error_t": 0.014686085283756256,
+    "error_m": 0.1132979467511177
+  },
+  {
+    "sample_id": "v3se_poi_45e363b5",
+    "poi_name": "Louisville Dental Associates",
+    "has_rtk_label": false,
+    "t_pred": 0.37888088822364807,
+    "t_true": 0.36972489953041077,
+    "facade_length_m": 23.1170597076416,
+    "error_t": 0.009155988693237305,
+    "error_m": 0.2116595357656479
+  },
+  {
+    "sample_id": "v3se_poi_f821dd43",
+    "poi_name": "Earth Sciences & Map Library",
+    "has_rtk_label": false,
+    "t_pred": 0.1887066513299942,
+    "t_true": 0.19775967299938202,
+    "facade_length_m": 47.1265983581543,
+    "error_t": 0.009053021669387817,
+    "error_m": 0.426638126373291
+  },
+  {
+    "sample_id": "v3se_poi_61bb4f3b",
+    "poi_name": "Campworks Coworking",
+    "has_rtk_label": false,
+    "t_pred": 0.391711562871933,
+    "t_true": 0.6146293878555298,
+    "facade_length_m": 20.47277069091797,
+    "error_t": 0.2229178249835968,
+    "error_m": 4.563745498657227
+  },
+  {
+    "sample_id": "v3se_poi_e0a3130c",
+    "poi_name": "International Martial Arts",
+    "has_rtk_label": false,
+    "t_pred": 0.05694273114204407,
+    "t_true": 0.0,
+    "facade_length_m": 2.1836297512054443,
+    "error_t": 0.05694273114204407,
+    "error_m": 0.12434184551239014
+  },
+  {
+    "sample_id": "v3se_poi_1644083f",
+    "poi_name": "Lindsay's Boulder Deli at Haagen- Dazs",
+    "has_rtk_label": false,
+    "t_pred": 0.0005799449281767011,
+    "t_true": 1.0,
+    "facade_length_m": 2.3397293090820312,
+    "error_t": 0.9994200468063354,
+    "error_m": 2.3383724689483643
+  },
+  {
+    "sample_id": "v3se_poi_8a8f1b11",
+    "poi_name": "NCAR Trail Head",
+    "has_rtk_label": false,
+    "t_pred": 0.9991893172264099,
+    "t_true": 1.0,
+    "facade_length_m": 4.047622203826904,
+    "error_t": 0.0008106827735900879,
+    "error_m": 0.0032813376747071743
+  },
+  {
+    "sample_id": "v3se_poi_a86080f1",
+    "poi_name": "Jax Fish House & Oyster Bar",
+    "has_rtk_label": true,
+    "t_pred": 0.47916173934936523,
+    "t_true": 0.5451329946517944,
+    "facade_length_m": 6.435626983642578,
+    "error_t": 0.0659712553024292,
+    "error_m": 0.424566388130188
+  },
+  {
+    "sample_id": "v3se_poi_8a6daddf",
+    "poi_name": "Elevations Credit Union",
+    "has_rtk_label": false,
+    "t_pred": 0.35847213864326477,
+    "t_true": 0.3269040584564209,
+    "facade_length_m": 17.251474380493164,
+    "error_t": 0.03156808018684387,
+    "error_m": 0.5445958971977234
+  },
+  {
+    "sample_id": "v3se_poi_6cfcab5d",
+    "poi_name": "Floyd's 99 Barbershop",
+    "has_rtk_label": false,
+    "t_pred": 0.39129838347435,
+    "t_true": 0.6124091744422913,
+    "facade_length_m": 12.327604293823242,
+    "error_t": 0.22111079096794128,
+    "error_m": 2.72576642036438
+  },
+  {
+    "sample_id": "v3se_poi_e0e9fa2e",
+    "poi_name": "Neat Loans",
+    "has_rtk_label": false,
+    "t_pred": 0.3094095289707184,
+    "t_true": 0.317298948764801,
+    "facade_length_m": 68.62992095947266,
+    "error_t": 0.007889419794082642,
+    "error_m": 0.5414502620697021
+  },
+  {
+    "sample_id": "v3se_poi_aa6f9e3e",
+    "poi_name": "Boulder Social",
+    "has_rtk_label": false,
+    "t_pred": 0.6211786270141602,
+    "t_true": 0.5854928493499756,
+    "facade_length_m": 1.8920122385025024,
+    "error_t": 0.03568577766418457,
+    "error_m": 0.06751792877912521
+  },
+  {
+    "sample_id": "v3se_poi_b9034662",
+    "poi_name": "Salt",
+    "has_rtk_label": true,
+    "t_pred": 0.568536102771759,
+    "t_true": 0.44790002703666687,
+    "facade_length_m": 2.422109842300415,
+    "error_t": 0.12063607573509216,
+    "error_m": 0.29219383001327515
+  },
+  {
+    "sample_id": "v3se_poi_0613a2c1",
+    "poi_name": "Thunderbird Barbers",
+    "has_rtk_label": true,
+    "t_pred": 0.32985639572143555,
+    "t_true": 0.663355827331543,
+    "facade_length_m": 10.98384952545166,
+    "error_t": 0.3334994316101074,
+    "error_m": 3.6631076335906982
+  },
+  {
+    "sample_id": "v3se_poi_29d17118",
+    "poi_name": "Grease Monkey",
+    "has_rtk_label": false,
+    "t_pred": 0.5428386926651001,
+    "t_true": 0.4444521367549896,
+    "facade_length_m": 17.072919845581055,
+    "error_t": 0.09838655591011047,
+    "error_m": 1.6797457933425903
+  },
+  {
+    "sample_id": "v3se_poi_73aad198",
+    "poi_name": "Colorado Glass Works",
+    "has_rtk_label": false,
+    "t_pred": 0.47493135929107666,
+    "t_true": 0.5214934945106506,
+    "facade_length_m": 21.29473304748535,
+    "error_t": 0.046562135219573975,
+    "error_m": 0.9915282130241394
+  },
+  {
+    "sample_id": "v3se_poi_511269dd",
+    "poi_name": "Taco Bell",
+    "has_rtk_label": false,
+    "t_pred": 0.4763679504394531,
+    "t_true": 0.4396585524082184,
+    "facade_length_m": 20.55848503112793,
+    "error_t": 0.03670939803123474,
+    "error_m": 0.754689633846283
+  },
+  {
+    "sample_id": "v3se_poi_468165e7",
+    "poi_name": "Brackett Hall",
+    "has_rtk_label": false,
+    "t_pred": 0.37523844838142395,
+    "t_true": 0.6750708222389221,
+    "facade_length_m": 47.28919219970703,
+    "error_t": 0.29983237385749817,
+    "error_m": 14.178831100463867
+  },
+  {
+    "sample_id": "v3se_poi_aac5c05e",
+    "poi_name": "Bellota",
+    "has_rtk_label": false,
+    "t_pred": 0.9836940169334412,
+    "t_true": 1.0,
+    "facade_length_m": 7.202424049377441,
+    "error_t": 0.016305983066558838,
+    "error_m": 0.11744260787963867
+  },
+  {
+    "sample_id": "v3se_poi_9ea0d1e9",
+    "poi_name": "Shin Yuu Izakaya",
+    "has_rtk_label": true,
+    "t_pred": 0.643795907497406,
+    "t_true": 0.6202749609947205,
+    "facade_length_m": 14.064737319946289,
+    "error_t": 0.023520946502685547,
+    "error_m": 0.3308159410953522
+  },
+  {
+    "sample_id": "v3se_poi_43eb4b76",
+    "poi_name": "12Degree Brewing",
+    "has_rtk_label": true,
+    "t_pred": 0.1736411154270172,
+    "t_true": 0.8070812225341797,
+    "facade_length_m": 10.698953628540039,
+    "error_t": 0.6334401369094849,
+    "error_m": 6.777146816253662
+  },
+  {
+    "sample_id": "v3se_poi_bce68167",
+    "poi_name": "Woof Gang Bakery Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.27248725295066833,
+    "t_true": 0.7165035605430603,
+    "facade_length_m": 9.94934368133545,
+    "error_t": 0.44401630759239197,
+    "error_m": 4.417670726776123
+  },
+  {
+    "sample_id": "v3se_poi_95116b21",
+    "poi_name": "BlackPaw",
+    "has_rtk_label": false,
+    "t_pred": 0.3483317196369171,
+    "t_true": 0.7018610835075378,
+    "facade_length_m": 42.37749099731445,
+    "error_t": 0.3535293638706207,
+    "error_m": 14.981687545776367
+  },
+  {
+    "sample_id": "v3se_poi_b1b88188",
+    "poi_name": "SlimGenics Louisville Weight Loss Center",
+    "has_rtk_label": false,
+    "t_pred": 0.5621212124824524,
+    "t_true": 0.5515075325965881,
+    "facade_length_m": 6.791468143463135,
+    "error_t": 0.010613679885864258,
+    "error_m": 0.07208246737718582
+  },
+  {
+    "sample_id": "v3se_poi_51d423b6",
+    "poi_name": "S'Park Apartments",
+    "has_rtk_label": false,
+    "t_pred": 0.023783525452017784,
+    "t_true": 0.9940311312675476,
+    "facade_length_m": 18.771472930908203,
+    "error_t": 0.9702476263046265,
+    "error_m": 18.212976455688477
+  },
+  {
+    "sample_id": "v3se_poi_48528c13",
+    "poi_name": "Classic Facets Ltd.",
+    "has_rtk_label": true,
+    "t_pred": 0.47985905408859253,
+    "t_true": 0.5005729794502258,
+    "facade_length_m": 7.18980073928833,
+    "error_t": 0.0207139253616333,
+    "error_m": 0.14892899990081787
+  },
+  {
+    "sample_id": "v3se_poi_64d8bc9b",
+    "poi_name": "Eyeworks",
+    "has_rtk_label": true,
+    "t_pred": 0.0025306623429059982,
+    "t_true": 0.0,
+    "facade_length_m": 2.9159798622131348,
+    "error_t": 0.0025306623429059982,
+    "error_m": 0.007379360496997833
+  },
+  {
+    "sample_id": "v3se_poi_e85cf76e",
+    "poi_name": "CVS Pharmacy",
+    "has_rtk_label": false,
+    "t_pred": 0.4249108135700226,
+    "t_true": 0.9982537031173706,
+    "facade_length_m": 6.946892261505127,
+    "error_t": 0.5733429193496704,
+    "error_m": 3.9829514026641846
+  },
+  {
+    "sample_id": "v3se_poi_e2fd6cd5",
+    "poi_name": "A-Ok Liquor",
+    "has_rtk_label": false,
+    "t_pred": 0.39336833357810974,
+    "t_true": 0.6854338049888611,
+    "facade_length_m": 13.091456413269043,
+    "error_t": 0.29206547141075134,
+    "error_m": 3.8235623836517334
+  },
+  {
+    "sample_id": "v3se_poi_8fdaa576",
+    "poi_name": "Center Your Body Pilates",
+    "has_rtk_label": true,
+    "t_pred": 0.4132063090801239,
+    "t_true": 0.40928390622138977,
+    "facade_length_m": 5.209804058074951,
+    "error_t": 0.003922402858734131,
+    "error_m": 0.020434949547052383
+  },
+  {
+    "sample_id": "v3se_poi_c102eaf9",
+    "poi_name": "West End Tavern",
+    "has_rtk_label": true,
+    "t_pred": 0.9780202507972717,
+    "t_true": 0.9978305101394653,
+    "facade_length_m": 23.489179611206055,
+    "error_t": 0.019810259342193604,
+    "error_m": 0.465326726436615
+  },
+  {
+    "sample_id": "v3se_poi_024c769a",
+    "poi_name": "Pedro's Tacos & Tequila Bar Boulder",
+    "has_rtk_label": true,
+    "t_pred": 0.3986983895301819,
+    "t_true": 0.25031280517578125,
+    "facade_length_m": 1.6523282527923584,
+    "error_t": 0.14838558435440063,
+    "error_m": 0.24518169462680817
+  },
+  {
+    "sample_id": "v3se_poi_37ce47e1",
+    "poi_name": "Boulder Bookstore",
+    "has_rtk_label": true,
+    "t_pred": 0.2511531114578247,
+    "t_true": 0.7555265426635742,
+    "facade_length_m": 4.730824947357178,
+    "error_t": 0.5043734312057495,
+    "error_m": 2.3861024379730225
+  },
+  {
+    "sample_id": "v3se_poi_2286b150",
+    "poi_name": "Louisville Chamber of Commerce",
+    "has_rtk_label": true,
+    "t_pred": 0.8611084818840027,
+    "t_true": 0.1756511777639389,
+    "facade_length_m": 2.664785861968994,
+    "error_t": 0.6854572892189026,
+    "error_m": 1.8265968561172485
+  },
+  {
+    "sample_id": "v3se_poi_f25b9fd6",
+    "poi_name": "University of Colorado Boulder Department of Biochemistry",
+    "has_rtk_label": false,
+    "t_pred": 0.3905084431171417,
+    "t_true": 0.26133105158805847,
+    "facade_length_m": 17.215206146240234,
+    "error_t": 0.12917739152908325,
+    "error_m": 2.223815441131592
+  },
+  {
+    "sample_id": "v3se_poi_b0d3d308",
+    "poi_name": "Clean Your Dirty Face",
+    "has_rtk_label": false,
+    "t_pred": 0.8503283858299255,
+    "t_true": 0.15862087905406952,
+    "facade_length_m": 11.464433670043945,
+    "error_t": 0.6917074918746948,
+    "error_m": 7.930034637451172
+  },
+  {
+    "sample_id": "v3se_poi_b4007a94",
+    "poi_name": "Louisville Family Animal Hospital",
+    "has_rtk_label": false,
+    "t_pred": 0.9300121068954468,
+    "t_true": 0.9021901488304138,
+    "facade_length_m": 4.809812068939209,
+    "error_t": 0.02782195806503296,
+    "error_m": 0.1338183879852295
+  },
+  {
+    "sample_id": "v3se_poi_561c805c",
+    "poi_name": "Crystal Springs Brewing Company",
+    "has_rtk_label": true,
+    "t_pred": 0.6934223771095276,
+    "t_true": 0.32876652479171753,
+    "facade_length_m": 11.144572257995605,
+    "error_t": 0.36465585231781006,
+    "error_m": 4.063933372497559
+  },
+  {
+    "sample_id": "v3se_poi_77ff2145",
+    "poi_name": "Sweetgreen",
+    "has_rtk_label": false,
+    "t_pred": 0.3280651271343231,
+    "t_true": 0.6812430620193481,
+    "facade_length_m": 33.204139709472656,
+    "error_t": 0.353177934885025,
+    "error_m": 11.726969718933105
+  },
+  {
+    "sample_id": "v3se_poi_76a4e3c9",
+    "poi_name": "Moe's Broadway Bagel",
+    "has_rtk_label": true,
+    "t_pred": 0.0019810909871011972,
+    "t_true": 1.0,
+    "facade_length_m": 14.876562118530273,
+    "error_t": 0.9980189204216003,
+    "error_m": 14.847090721130371
+  },
+  {
+    "sample_id": "v3se_poi_2ef4bcdd",
+    "poi_name": "Tilt Pinball",
+    "has_rtk_label": true,
+    "t_pred": 0.0050629181787371635,
+    "t_true": 0.0,
+    "facade_length_m": 2.31622576713562,
+    "error_t": 0.0050629181787371635,
+    "error_m": 0.0117268618196249
+  },
+  {
+    "sample_id": "v3se_poi_d821c20d",
+    "poi_name": "Sforno Trattoria Romana",
+    "has_rtk_label": false,
+    "t_pred": 0.6971176862716675,
+    "t_true": 0.7104436755180359,
+    "facade_length_m": 3.2934556007385254,
+    "error_t": 0.013325989246368408,
+    "error_m": 0.043888553977012634
+  },
+  {
+    "sample_id": "v3se_poi_52dd1f13",
+    "poi_name": "Food Lab",
+    "has_rtk_label": false,
+    "t_pred": 0.7998815178871155,
+    "t_true": 0.7440373301506042,
+    "facade_length_m": 2.4070446491241455,
+    "error_t": 0.05584418773651123,
+    "error_m": 0.13441945612430573
+  },
+  {
+    "sample_id": "v3se_poi_27b44293",
+    "poi_name": "Spruce Pool",
+    "has_rtk_label": false,
+    "t_pred": 0.5136229395866394,
+    "t_true": 0.4973869025707245,
+    "facade_length_m": 29.026517868041992,
+    "error_t": 0.016236037015914917,
+    "error_m": 0.4712756276130676
+  },
+  {
+    "sample_id": "v3se_poi_311dab6b",
+    "poi_name": "Waterloo",
+    "has_rtk_label": true,
+    "t_pred": 0.4665784239768982,
+    "t_true": 0.5157731175422668,
+    "facade_length_m": 7.926644802093506,
+    "error_t": 0.04919469356536865,
+    "error_m": 0.38994887471199036
+  },
+  {
+    "sample_id": "v3se_poi_fa1c0b7b",
+    "poi_name": "Boulder County Clerk and Recorder / Boulder County Elections",
+    "has_rtk_label": false,
+    "t_pred": 0.5206196904182434,
+    "t_true": 0.5528769493103027,
+    "facade_length_m": 75.23695373535156,
+    "error_t": 0.032257258892059326,
+    "error_m": 2.4269378185272217
+  },
+  {
+    "sample_id": "v3se_poi_b7022bb9",
+    "poi_name": "Pearl Street Pub and Cellar",
+    "has_rtk_label": true,
+    "t_pred": 0.9323719143867493,
+    "t_true": 0.0,
+    "facade_length_m": 15.343388557434082,
+    "error_t": 0.9323719143867493,
+    "error_m": 14.305744171142578
+  },
+  {
+    "sample_id": "v3se_poi_f3901aeb",
+    "poi_name": "Arhaus",
+    "has_rtk_label": false,
+    "t_pred": 0.31146490573883057,
+    "t_true": 0.28358423709869385,
+    "facade_length_m": 40.34000015258789,
+    "error_t": 0.02788066864013672,
+    "error_m": 1.1247061491012573
+  },
+  {
+    "sample_id": "v3se_poi_00f85052",
+    "poi_name": "Black Diamond",
+    "has_rtk_label": false,
+    "t_pred": 0.5464264750480652,
+    "t_true": 0.4351893663406372,
+    "facade_length_m": 22.99444007873535,
+    "error_t": 0.11123710870742798,
+    "error_m": 2.557835102081299
+  },
+  {
+    "sample_id": "v3se_poi_43c34566",
+    "poi_name": "Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.9674592614173889,
+    "t_true": 0.9689568877220154,
+    "facade_length_m": 16.853925704956055,
+    "error_t": 0.0014976263046264648,
+    "error_m": 0.025240883231163025
+  },
+  {
+    "sample_id": "v3se_poi_81429902",
+    "poi_name": "Easton Training Center",
+    "has_rtk_label": false,
+    "t_pred": 0.022640610113739967,
+    "t_true": 0.0,
+    "facade_length_m": 20.438566207885742,
+    "error_t": 0.022640610113739967,
+    "error_m": 0.4627416133880615
+  },
+  {
+    "sample_id": "v3se_poi_218c8e64",
+    "poi_name": "Lofts On College",
+    "has_rtk_label": false,
+    "t_pred": 0.3391365110874176,
+    "t_true": 0.35872185230255127,
+    "facade_length_m": 37.17283630371094,
+    "error_t": 0.019585341215133667,
+    "error_m": 0.7280426621437073
+  },
+  {
+    "sample_id": "v3se_poi_4f9a02cd",
+    "poi_name": "Auguste Escoffier School of Culinary Arts",
+    "has_rtk_label": false,
+    "t_pred": 0.44398584961891174,
+    "t_true": 0.2747555375099182,
+    "facade_length_m": 47.60551834106445,
+    "error_t": 0.16923031210899353,
+    "error_m": 8.056296348571777
+  },
+  {
+    "sample_id": "v3se_poi_bbb79854",
+    "poi_name": "Japango",
+    "has_rtk_label": true,
+    "t_pred": 0.853498637676239,
+    "t_true": 0.8489975333213806,
+    "facade_length_m": 15.026731491088867,
+    "error_t": 0.0045011043548583984,
+    "error_m": 0.0676368847489357
+  },
+  {
+    "sample_id": "v3se_poi_d11ca7d4",
+    "poi_name": "Athleta",
+    "has_rtk_label": true,
+    "t_pred": 0.0038808584213256836,
+    "t_true": 0.0,
+    "facade_length_m": 12.652969360351562,
+    "error_t": 0.0038808584213256836,
+    "error_m": 0.04910438135266304
+  },
+  {
+    "sample_id": "v3se_poi_38a84bd1",
+    "poi_name": "Grease Monkey",
+    "has_rtk_label": false,
+    "t_pred": 0.01019387785345316,
+    "t_true": 1.0,
+    "facade_length_m": 9.618142127990723,
+    "error_t": 0.9898061156272888,
+    "error_m": 9.520095825195312
+  },
+  {
+    "sample_id": "v3se_poi_a9070d87",
+    "poi_name": "Pitter Patter",
+    "has_rtk_label": true,
+    "t_pred": 0.9938126802444458,
+    "t_true": 0.22031477093696594,
+    "facade_length_m": 6.793354034423828,
+    "error_t": 0.7734979391098022,
+    "error_m": 5.254645347595215
+  },
+  {
+    "sample_id": "v3se_poi_09c2c2a9",
+    "poi_name": "Carpet Exchange",
+    "has_rtk_label": false,
+    "t_pred": 0.9687776565551758,
+    "t_true": 1.0,
+    "facade_length_m": 3.089736223220825,
+    "error_t": 0.03122234344482422,
+    "error_m": 0.09646880626678467
+  },
+  {
+    "sample_id": "v3se_poi_fef908cc",
+    "poi_name": "Sunbelt Rentals",
+    "has_rtk_label": false,
+    "t_pred": 0.024801718071103096,
+    "t_true": 0.02173842303454876,
+    "facade_length_m": 25.961275100708008,
+    "error_t": 0.0030632950365543365,
+    "error_m": 0.07952704280614853
+  },
+  {
+    "sample_id": "v3se_poi_a19e9561",
+    "poi_name": "Ninja Nation",
+    "has_rtk_label": false,
+    "t_pred": 0.8736853003501892,
+    "t_true": 0.8437113165855408,
+    "facade_length_m": 52.38998031616211,
+    "error_t": 0.029973983764648438,
+    "error_m": 1.5703364610671997
+  },
+  {
+    "sample_id": "v3se_poi_c60080c5",
+    "poi_name": "Batteries Plus Bulbs",
+    "has_rtk_label": false,
+    "t_pred": 0.7541810274124146,
+    "t_true": 0.7389359474182129,
+    "facade_length_m": 18.02290916442871,
+    "error_t": 0.01524507999420166,
+    "error_m": 0.2747606933116913
+  },
+  {
+    "sample_id": "v3se_poi_453a4b0c",
+    "poi_name": "Lucky's Bakehouse",
+    "has_rtk_label": false,
+    "t_pred": 0.012906692922115326,
+    "t_true": 1.0,
+    "facade_length_m": 2.493626356124878,
+    "error_t": 0.9870933294296265,
+    "error_m": 2.461441993713379
+  },
+  {
+    "sample_id": "v3se_poi_afa10e00",
+    "poi_name": "Whole Foods Market",
+    "has_rtk_label": false,
+    "t_pred": 0.01579396426677704,
+    "t_true": 0.0,
+    "facade_length_m": 14.019030570983887,
+    "error_t": 0.01579396426677704,
+    "error_m": 0.22141607105731964
+  },
+  {
+    "sample_id": "v3se_poi_17c0c3c8",
+    "poi_name": "Phenix Salon Suites - Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.9325647950172424,
+    "t_true": 0.0,
+    "facade_length_m": 1.8879321813583374,
+    "error_t": 0.9325647950172424,
+    "error_m": 1.760619044303894
+  },
+  {
+    "sample_id": "v3se_poi_23d285ca",
+    "poi_name": "Fresh Baked",
+    "has_rtk_label": false,
+    "t_pred": 0.024617575109004974,
+    "t_true": 0.0,
+    "facade_length_m": 10.458864212036133,
+    "error_t": 0.024617575109004974,
+    "error_m": 0.25747188925743103
+  },
+  {
+    "sample_id": "v3se_poi_5d86210e",
+    "poi_name": "Farfel's Farm",
+    "has_rtk_label": true,
+    "t_pred": 0.01828121207654476,
+    "t_true": 1.0,
+    "facade_length_m": 23.489179611206055,
+    "error_t": 0.9817187786102295,
+    "error_m": 23.059768676757812
+  },
+  {
+    "sample_id": "v3se_poi_e928a5f4",
+    "poi_name": "Great Harvest Bread Company",
+    "has_rtk_label": false,
+    "t_pred": 0.032525237649679184,
+    "t_true": 1.0,
+    "facade_length_m": 4.186187744140625,
+    "error_t": 0.9674747586250305,
+    "error_m": 4.0500311851501465
+  },
+  {
+    "sample_id": "v3se_poi_f7ce5429",
+    "poi_name": "Henry's Bar and Grill",
+    "has_rtk_label": true,
+    "t_pred": 0.0016566149424761534,
+    "t_true": 1.0,
+    "facade_length_m": 0.445279985666275,
+    "error_t": 0.9983434081077576,
+    "error_m": 0.4445423483848572
+  },
+  {
+    "sample_id": "v3se_poi_0fc3fe4c",
+    "poi_name": "Centro Mexican Kitchen",
+    "has_rtk_label": true,
+    "t_pred": 0.038083307445049286,
+    "t_true": 1.0,
+    "facade_length_m": 2.6022331714630127,
+    "error_t": 0.9619166851043701,
+    "error_m": 2.50313138961792
+  },
+  {
+    "sample_id": "v3se_poi_82a9c997",
+    "poi_name": "Punch Buggy Shave Ice",
+    "has_rtk_label": true,
+    "t_pred": 0.004261393565684557,
+    "t_true": 0.0,
+    "facade_length_m": 2.5826804637908936,
+    "error_t": 0.004261393565684557,
+    "error_m": 0.011005817912518978
+  },
+  {
+    "sample_id": "v3se_poi_3a2c0620",
+    "poi_name": "Tribal Rites Tattoo & Piercing",
+    "has_rtk_label": false,
+    "t_pred": 0.4299180805683136,
+    "t_true": 0.5631173253059387,
+    "facade_length_m": 8.205108642578125,
+    "error_t": 0.13319924473762512,
+    "error_m": 1.0929142236709595
+  },
+  {
+    "sample_id": "v3se_poi_9f131240",
+    "poi_name": "Rocky Mountain Tap & Garden",
+    "has_rtk_label": true,
+    "t_pred": 0.008287728764116764,
+    "t_true": 0.0,
+    "facade_length_m": 18.996646881103516,
+    "error_t": 0.008287728764116764,
+    "error_m": 0.15743905305862427
+  },
+  {
+    "sample_id": "v3se_poi_00161dcb",
+    "poi_name": "Efrains Mexican Restaurant",
+    "has_rtk_label": false,
+    "t_pred": 0.6163070797920227,
+    "t_true": 0.3797778785228729,
+    "facade_length_m": 19.9644832611084,
+    "error_t": 0.23652920126914978,
+    "error_m": 4.7221832275390625
+  },
+  {
+    "sample_id": "v3se_poi_c20bcaaf",
+    "poi_name": "Fortune Park",
+    "has_rtk_label": false,
+    "t_pred": 0.010742866434156895,
+    "t_true": 0.0,
+    "facade_length_m": 7.854296684265137,
+    "error_t": 0.010742866434156895,
+    "error_m": 0.08437766134738922
+  },
+  {
+    "sample_id": "v3se_poi_e82c0cd3",
+    "poi_name": "John Breaux Park",
+    "has_rtk_label": false,
+    "t_pred": 0.49573349952697754,
+    "t_true": 0.4392833113670349,
+    "facade_length_m": 6.102713108062744,
+    "error_t": 0.05645018815994263,
+    "error_m": 0.34449928998947144
+  },
+  {
+    "sample_id": "v3se_poi_9ae22113",
+    "poi_name": "Azul Fuego Mexican Restaurant",
+    "has_rtk_label": true,
+    "t_pred": 0.35612189769744873,
+    "t_true": 0.6730420589447021,
+    "facade_length_m": 3.2866241931915283,
+    "error_t": 0.3169201612472534,
+    "error_m": 1.0415974855422974
+  },
+  {
+    "sample_id": "v3se_poi_2932c492",
+    "poi_name": "Skin Harmonics",
+    "has_rtk_label": false,
+    "t_pred": 0.5030060410499573,
+    "t_true": 0.46301722526550293,
+    "facade_length_m": 13.15403938293457,
+    "error_t": 0.039988815784454346,
+    "error_m": 0.5260144472122192
+  },
+  {
+    "sample_id": "v3se_poi_88f9058b",
+    "poi_name": "Elison Rd.",
+    "has_rtk_label": true,
+    "t_pred": 0.02758076786994934,
+    "t_true": 0.0,
+    "facade_length_m": 15.343388557434082,
+    "error_t": 0.02758076786994934,
+    "error_m": 0.4231824278831482
+  },
+  {
+    "sample_id": "v3se_poi_dbe15932",
+    "poi_name": "University of Colorado Boulder College of Media, Communication and Information",
+    "has_rtk_label": false,
+    "t_pred": 0.6635379195213318,
+    "t_true": 0.655645489692688,
+    "facade_length_m": 43.215396881103516,
+    "error_t": 0.007892429828643799,
+    "error_m": 0.34107449650764465
+  },
+  {
+    "sample_id": "v3se_poi_24c4af78",
+    "poi_name": "Ozo Coffee",
+    "has_rtk_label": true,
+    "t_pred": 0.5276277661323547,
+    "t_true": 0.5111829042434692,
+    "facade_length_m": 8.381817817687988,
+    "error_t": 0.016444861888885498,
+    "error_m": 0.13783784210681915
+  },
+  {
+    "sample_id": "v3se_poi_929aa88c",
+    "poi_name": "Campbell Overlook",
+    "has_rtk_label": false,
+    "t_pred": 0.9558457136154175,
+    "t_true": 1.0,
+    "facade_length_m": 3.2090179920196533,
+    "error_t": 0.04415428638458252,
+    "error_m": 0.1416918933391571
+  },
+  {
+    "sample_id": "v3se_poi_41786e78",
+    "poi_name": "Ziggi's Coffee",
+    "has_rtk_label": true,
+    "t_pred": 0.9963669776916504,
+    "t_true": 1.0,
+    "facade_length_m": 14.876562118530273,
+    "error_t": 0.0036330223083496094,
+    "error_m": 0.054046880453825
+  },
+  {
+    "sample_id": "v3se_poi_67a0de96",
+    "poi_name": "Rocky Mountain Anglers",
+    "has_rtk_label": false,
+    "t_pred": 0.5135656595230103,
+    "t_true": 0.4888578951358795,
+    "facade_length_m": 16.736604690551758,
+    "error_t": 0.024707764387130737,
+    "error_m": 0.4135240912437439
+  },
+  {
+    "sample_id": "v3se_poi_6f4acc75",
+    "poi_name": "Altar'd State",
+    "has_rtk_label": false,
+    "t_pred": 0.9598087072372437,
+    "t_true": 0.9999880194664001,
+    "facade_length_m": 37.41021728515625,
+    "error_t": 0.040179312229156494,
+    "error_m": 1.5031168460845947
+  },
+  {
+    "sample_id": "v3se_poi_cfc90ab7",
+    "poi_name": "Hobby Lobby",
+    "has_rtk_label": false,
+    "t_pred": 0.8431165218353271,
+    "t_true": 0.8182917237281799,
+    "facade_length_m": 31.68574333190918,
+    "error_t": 0.024824798107147217,
+    "error_m": 0.7865921854972839
+  },
+  {
+    "sample_id": "v3se_poi_2944cc1e",
+    "poi_name": "Rising Phoenix Construction Design and Testing, LLC",
+    "has_rtk_label": false,
+    "t_pred": 0.43462255597114563,
+    "t_true": 0.3453998565673828,
+    "facade_length_m": 3.9838225841522217,
+    "error_t": 0.08922269940376282,
+    "error_m": 0.3554474115371704
+  },
+  {
+    "sample_id": "v3se_poi_dc4c4b8a",
+    "poi_name": "Play It Again Sports Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.5246948599815369,
+    "t_true": 0.542312741279602,
+    "facade_length_m": 115.59065246582031,
+    "error_t": 0.017617881298065186,
+    "error_m": 2.0364623069763184
+  },
+  {
+    "sample_id": "v3se_poi_caf86f4e",
+    "poi_name": "SmithKlein Gallery",
+    "has_rtk_label": true,
+    "t_pred": 0.5258179903030396,
+    "t_true": 0.5159038305282593,
+    "facade_length_m": 8.310508728027344,
+    "error_t": 0.009914159774780273,
+    "error_m": 0.08239170908927917
+  },
+  {
+    "sample_id": "v3se_poi_ffa8fd64",
+    "poi_name": "Mia Ness at Slifer Smith & Frampton & John R Wood",
+    "has_rtk_label": false,
+    "t_pred": 0.501853346824646,
+    "t_true": 0.554980993270874,
+    "facade_length_m": 7.617290019989014,
+    "error_t": 0.05312764644622803,
+    "error_m": 0.40468868613243103
+  },
+  {
+    "sample_id": "v3se_poi_da02ef11",
+    "poi_name": "Boulder Commons",
+    "has_rtk_label": false,
+    "t_pred": 0.8489454388618469,
+    "t_true": 0.8298081755638123,
+    "facade_length_m": 23.879169464111328,
+    "error_t": 0.019137263298034668,
+    "error_m": 0.45698195695877075
+  },
+  {
+    "sample_id": "v3se_poi_c0320a28",
+    "poi_name": "Terracina Apartments",
+    "has_rtk_label": false,
+    "t_pred": 0.5885310173034668,
+    "t_true": 0.5973552465438843,
+    "facade_length_m": 9.963271141052246,
+    "error_t": 0.00882422924041748,
+    "error_m": 0.08791819214820862
+  },
+  {
+    "sample_id": "v3se_poi_69568455",
+    "poi_name": "Double Happy",
+    "has_rtk_label": true,
+    "t_pred": 0.22948294878005981,
+    "t_true": 0.23752863705158234,
+    "facade_length_m": 14.148836135864258,
+    "error_t": 0.008045688271522522,
+    "error_m": 0.11383712291717529
+  },
+  {
+    "sample_id": "v3se_poi_efd24f46",
+    "poi_name": "Boulder Creek Neighborhoods",
+    "has_rtk_label": true,
+    "t_pred": 0.4744015336036682,
+    "t_true": 0.5433685779571533,
+    "facade_length_m": 14.204639434814453,
+    "error_t": 0.06896704435348511,
+    "error_m": 0.9796519875526428
+  },
+  {
+    "sample_id": "v3se_poi_e5ce8ecd",
+    "poi_name": "J.Crew Factory",
+    "has_rtk_label": false,
+    "t_pred": 0.20921985805034637,
+    "t_true": 0.7720431089401245,
+    "facade_length_m": 14.860733032226562,
+    "error_t": 0.5628232359886169,
+    "error_m": 8.36396598815918
+  },
+  {
+    "sample_id": "v3se_poi_8523b025",
+    "poi_name": "Boulder Medical Center",
+    "has_rtk_label": false,
+    "t_pred": 0.4177178740501404,
+    "t_true": 0.0,
+    "facade_length_m": 7.7061076164245605,
+    "error_t": 0.4177178740501404,
+    "error_m": 3.2189788818359375
+  },
+  {
+    "sample_id": "v3se_poi_25b6c402",
+    "poi_name": "Harvest Wine & Spirits",
+    "has_rtk_label": false,
+    "t_pred": 0.17586684226989746,
+    "t_true": 0.8541900515556335,
+    "facade_length_m": 24.457077026367188,
+    "error_t": 0.6783232092857361,
+    "error_m": 16.58980369567871
+  },
+  {
+    "sample_id": "v3se_poi_ecbc62b2",
+    "poi_name": "Urban Outfitters",
+    "has_rtk_label": true,
+    "t_pred": 0.4775111973285675,
+    "t_true": 0.5206255912780762,
+    "facade_length_m": 14.084285736083984,
+    "error_t": 0.04311439394950867,
+    "error_m": 0.6072354316711426
+  },
+  {
+    "sample_id": "v3se_poi_f43276a6",
+    "poi_name": "Family Holistic Dentistry",
+    "has_rtk_label": false,
+    "t_pred": 0.9430378079414368,
+    "t_true": 0.045771524310112,
+    "facade_length_m": 0.5677319765090942,
+    "error_t": 0.8972662687301636,
+    "error_m": 0.5094067454338074
+  },
+  {
+    "sample_id": "v3se_poi_6706f141",
+    "poi_name": "Legion Park",
+    "has_rtk_label": false,
+    "t_pred": 0.9261775612831116,
+    "t_true": 1.0,
+    "facade_length_m": 24.24549674987793,
+    "error_t": 0.07382243871688843,
+    "error_m": 1.7898616790771484
+  },
+  {
+    "sample_id": "v3se_poi_1c30b842",
+    "poi_name": "Saga Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.9714556336402893,
+    "t_true": 1.0,
+    "facade_length_m": 1.932471513748169,
+    "error_t": 0.028544366359710693,
+    "error_m": 0.05516117438673973
+  },
+  {
+    "sample_id": "v3se_poi_f70c7a54",
+    "poi_name": "Radiance Medspa",
+    "has_rtk_label": true,
+    "t_pred": 0.5505481362342834,
+    "t_true": 0.42180779576301575,
+    "facade_length_m": 7.7382636070251465,
+    "error_t": 0.1287403404712677,
+    "error_m": 0.9962266683578491
+  },
+  {
+    "sample_id": "v3se_poi_b292dad0",
+    "poi_name": "Blueroof Equestrian Center",
+    "has_rtk_label": false,
+    "t_pred": 0.017018573358654976,
+    "t_true": 0.5906111001968384,
+    "facade_length_m": 55.309417724609375,
+    "error_t": 0.5735925436019897,
+    "error_m": 31.725069046020508
+  },
+  {
+    "sample_id": "v3se_poi_53324e4d",
+    "poi_name": "SEPHORA at Kohl's",
+    "has_rtk_label": false,
+    "t_pred": 0.43115752935409546,
+    "t_true": 0.5586593747138977,
+    "facade_length_m": 74.60699462890625,
+    "error_t": 0.12750184535980225,
+    "error_m": 9.512529373168945
+  },
+  {
+    "sample_id": "v3se_poi_3ca036ea",
+    "poi_name": "Boulder Municipal Building",
+    "has_rtk_label": false,
+    "t_pred": 0.021589074283838272,
+    "t_true": 1.0,
+    "facade_length_m": 2.964932441711426,
+    "error_t": 0.9784108996391296,
+    "error_m": 2.9009222984313965
+  },
+  {
+    "sample_id": "v3se_poi_2c2d85df",
+    "poi_name": "Redgarden Restaurant and Brewery",
+    "has_rtk_label": false,
+    "t_pred": 0.16756464540958405,
+    "t_true": 0.1883966475725174,
+    "facade_length_m": 14.623823165893555,
+    "error_t": 0.02083200216293335,
+    "error_m": 0.30464351177215576
+  },
+  {
+    "sample_id": "v3se_poi_6aca5407",
+    "poi_name": "Proto's Pizza",
+    "has_rtk_label": false,
+    "t_pred": 0.811392068862915,
+    "t_true": 0.8279775381088257,
+    "facade_length_m": 10.71136474609375,
+    "error_t": 0.016585469245910645,
+    "error_m": 0.1776530146598816
+  },
+  {
+    "sample_id": "v3se_poi_93d6479a",
+    "poi_name": "Mount Sanitas Trailhead",
+    "has_rtk_label": false,
+    "t_pred": 0.8518077731132507,
+    "t_true": 1.0,
+    "facade_length_m": 2.472886562347412,
+    "error_t": 0.14819222688674927,
+    "error_m": 0.3664625585079193
+  },
+  {
+    "sample_id": "v3se_poi_34716b7f",
+    "poi_name": "Wild Manor",
+    "has_rtk_label": false,
+    "t_pred": 0.0027974359691143036,
+    "t_true": 0.9991556406021118,
+    "facade_length_m": 1.9327213764190674,
+    "error_t": 0.9963582158088684,
+    "error_m": 1.925682783126831
+  },
+  {
+    "sample_id": "v3se_poi_2c84d282",
+    "poi_name": "Louisville Family Center",
+    "has_rtk_label": true,
+    "t_pred": 0.41808032989501953,
+    "t_true": 0.5349664688110352,
+    "facade_length_m": 7.782184600830078,
+    "error_t": 0.11688613891601562,
+    "error_m": 0.9096295237541199
+  },
+  {
+    "sample_id": "v3se_poi_5f38759b",
+    "poi_name": "Labcorp",
+    "has_rtk_label": false,
+    "t_pred": 0.7765622138977051,
+    "t_true": 0.7515178918838501,
+    "facade_length_m": 41.97925567626953,
+    "error_t": 0.02504432201385498,
+    "error_m": 1.0513420104980469
+  },
+  {
+    "sample_id": "v3se_poi_9e985a50",
+    "poi_name": "Snarf's Sandwiches",
+    "has_rtk_label": false,
+    "t_pred": 0.02311665378510952,
+    "t_true": 1.0,
+    "facade_length_m": 6.678534507751465,
+    "error_t": 0.9768833518028259,
+    "error_m": 6.524148941040039
+  },
+  {
+    "sample_id": "v3se_poi_9cfa8871",
+    "poi_name": "Gamers Guild",
+    "has_rtk_label": false,
+    "t_pred": 0.2604354918003082,
+    "t_true": 0.7601231932640076,
+    "facade_length_m": 8.805560111999512,
+    "error_t": 0.49968770146369934,
+    "error_m": 4.400030136108398
+  },
+  {
+    "sample_id": "v3se_poi_66d94a50",
+    "poi_name": "Louisville Historical Museum",
+    "has_rtk_label": false,
+    "t_pred": 0.22125926613807678,
+    "t_true": 0.22654429078102112,
+    "facade_length_m": 6.456920623779297,
+    "error_t": 0.005285024642944336,
+    "error_m": 0.034124985337257385
+  },
+  {
+    "sample_id": "v3se_poi_159aae49",
+    "poi_name": "Andy Fekade - REALTOR\u00ae at West + Main Homes",
+    "has_rtk_label": false,
+    "t_pred": 0.29778555035591125,
+    "t_true": 0.30693504214286804,
+    "facade_length_m": 13.929939270019531,
+    "error_t": 0.009149491786956787,
+    "error_m": 0.12745186686515808
+  },
+  {
+    "sample_id": "v3se_poi_b621ff8b",
+    "poi_name": "Falafel King",
+    "has_rtk_label": false,
+    "t_pred": 0.9923396110534668,
+    "t_true": 1.0,
+    "facade_length_m": 1.1042752265930176,
+    "error_t": 0.007660388946533203,
+    "error_m": 0.008459177799522877
+  },
+  {
+    "sample_id": "v3se_poi_a5a6a31f",
+    "poi_name": "The Details Shop Of Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.9977946281433105,
+    "t_true": 1.0,
+    "facade_length_m": 16.930265426635742,
+    "error_t": 0.002205371856689453,
+    "error_m": 0.0373375304043293
+  },
+  {
+    "sample_id": "v3se_poi_c534de5f",
+    "poi_name": "Pet Menders Animal Hospital",
+    "has_rtk_label": false,
+    "t_pred": 0.4676355719566345,
+    "t_true": 0.43947678804397583,
+    "facade_length_m": 20.27058982849121,
+    "error_t": 0.02815878391265869,
+    "error_m": 0.5707951784133911
+  },
+  {
+    "sample_id": "v3se_poi_59628b17",
+    "poi_name": "Spruce Confections",
+    "has_rtk_label": false,
+    "t_pred": 0.4325251281261444,
+    "t_true": 0.5832904577255249,
+    "facade_length_m": 7.540444374084473,
+    "error_t": 0.1507653295993805,
+    "error_m": 1.1368376016616821
+  },
+  {
+    "sample_id": "v3se_poi_09956a6d",
+    "poi_name": "Apocalypse",
+    "has_rtk_label": false,
+    "t_pred": 0.37985876202583313,
+    "t_true": 0.7377358078956604,
+    "facade_length_m": 6.01167631149292,
+    "error_t": 0.35787704586982727,
+    "error_m": 2.1514408588409424
+  },
+  {
+    "sample_id": "v3se_poi_9d86e48a",
+    "poi_name": "Tandoori Grill",
+    "has_rtk_label": false,
+    "t_pred": 0.9032149314880371,
+    "t_true": 0.8889803290367126,
+    "facade_length_m": 50.38700485229492,
+    "error_t": 0.014234602451324463,
+    "error_m": 0.7172389626502991
+  },
+  {
+    "sample_id": "v3se_poi_85ed0442",
+    "poi_name": "The Simon",
+    "has_rtk_label": true,
+    "t_pred": 0.8488602638244629,
+    "t_true": 0.8445340991020203,
+    "facade_length_m": 14.705572128295898,
+    "error_t": 0.004326164722442627,
+    "error_m": 0.0636187270283699
+  },
+  {
+    "sample_id": "v3se_poi_62cbb3e1",
+    "poi_name": "Wendy's",
+    "has_rtk_label": false,
+    "t_pred": 0.4676009714603424,
+    "t_true": 0.43069368600845337,
+    "facade_length_m": 2.3020002841949463,
+    "error_t": 0.03690728545188904,
+    "error_m": 0.08496057987213135
+  },
+  {
+    "sample_id": "v3se_poi_1280eb3c",
+    "poi_name": "Lawrence D Enrietto Park",
+    "has_rtk_label": false,
+    "t_pred": 0.8148825764656067,
+    "t_true": 0.0,
+    "facade_length_m": 15.1162109375,
+    "error_t": 0.8148825764656067,
+    "error_m": 12.317936897277832
+  },
+  {
+    "sample_id": "v3se_poi_7f7ed0be",
+    "poi_name": "Orangetheory Fitness Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.37839367985725403,
+    "t_true": 0.6210671067237854,
+    "facade_length_m": 36.569637298583984,
+    "error_t": 0.24267342686653137,
+    "error_m": 8.874479293823242
+  },
+  {
+    "sample_id": "v3se_poi_ad2ec47b",
+    "poi_name": "The Residences at Balfour",
+    "has_rtk_label": false,
+    "t_pred": 0.5106098651885986,
+    "t_true": 0.547200083732605,
+    "facade_length_m": 38.845947265625,
+    "error_t": 0.03659021854400635,
+    "error_m": 1.4213817119598389
+  },
+  {
+    "sample_id": "v3se_poi_e39b3c28",
+    "poi_name": "You and Mee Noodle House",
+    "has_rtk_label": false,
+    "t_pred": 0.4254407286643982,
+    "t_true": 0.48021796345710754,
+    "facade_length_m": 2.966412305831909,
+    "error_t": 0.05477723479270935,
+    "error_m": 0.16249185800552368
+  },
+  {
+    "sample_id": "v3se_poi_bb30e94b",
+    "poi_name": "Boulder Zen Center",
+    "has_rtk_label": false,
+    "t_pred": 0.0755816400051117,
+    "t_true": 0.09677359461784363,
+    "facade_length_m": 8.926117897033691,
+    "error_t": 0.021191954612731934,
+    "error_m": 0.18916188180446625
+  },
+  {
+    "sample_id": "v3se_poi_a63a4fe4",
+    "poi_name": "Pedestrian Shops",
+    "has_rtk_label": false,
+    "t_pred": 0.7055938839912415,
+    "t_true": 0.720097541809082,
+    "facade_length_m": 22.99444007873535,
+    "error_t": 0.014503657817840576,
+    "error_m": 0.33350348472595215
+  },
+  {
+    "sample_id": "v3se_poi_13cf30b7",
+    "poi_name": "Cosmo's Pizza",
+    "has_rtk_label": false,
+    "t_pred": 0.0013292572693899274,
+    "t_true": 0.010679494589567184,
+    "facade_length_m": 1.339097023010254,
+    "error_t": 0.009350237436592579,
+    "error_m": 0.012520874850451946
+  },
+  {
+    "sample_id": "v3se_poi_2a356890",
+    "poi_name": "Winot Coffee Company",
+    "has_rtk_label": false,
+    "t_pred": 0.9551556706428528,
+    "t_true": 0.0,
+    "facade_length_m": 0.5927242636680603,
+    "error_t": 0.9551556706428528,
+    "error_m": 0.5661439299583435
+  },
+  {
+    "sample_id": "v3se_poi_cbccc412",
+    "poi_name": "Realness Project",
+    "has_rtk_label": false,
+    "t_pred": 0.4300399124622345,
+    "t_true": 0.39544838666915894,
+    "facade_length_m": 156.21200561523438,
+    "error_t": 0.03459152579307556,
+    "error_m": 5.403611660003662
+  },
+  {
+    "sample_id": "v3se_poi_83a09543",
+    "poi_name": "H&R Block",
+    "has_rtk_label": false,
+    "t_pred": 0.309218168258667,
+    "t_true": 0.29780489206314087,
+    "facade_length_m": 115.59065246582031,
+    "error_t": 0.011413276195526123,
+    "error_m": 1.319267988204956
+  },
+  {
+    "sample_id": "v3se_poi_a6609d27",
+    "poi_name": "University of Colorado Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.012750216759741306,
+    "t_true": 0.5512830018997192,
+    "facade_length_m": 43.681846618652344,
+    "error_t": 0.5385327935218811,
+    "error_m": 23.524106979370117
+  },
+  {
+    "sample_id": "v3se_poi_4738ac89",
+    "poi_name": "Scherer Violin Shop",
+    "has_rtk_label": true,
+    "t_pred": 0.647986114025116,
+    "t_true": 0.4268127977848053,
+    "facade_length_m": 9.250727653503418,
+    "error_t": 0.22117331624031067,
+    "error_m": 2.0460140705108643
+  },
+  {
+    "sample_id": "v3se_poi_fe02ea65",
+    "poi_name": "Ash'Kara Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.7447434067726135,
+    "t_true": 0.28078973293304443,
+    "facade_length_m": 6.357996940612793,
+    "error_t": 0.4639536738395691,
+    "error_m": 2.9498159885406494
+  },
+  {
+    "sample_id": "v3se_poi_5ae8b760",
+    "poi_name": "CU Boulder College of Arts & Sciences",
+    "has_rtk_label": false,
+    "t_pred": 0.43106165528297424,
+    "t_true": 0.5902494788169861,
+    "facade_length_m": 5.381042957305908,
+    "error_t": 0.15918782353401184,
+    "error_m": 0.8565965294837952
+  },
+  {
+    "sample_id": "v3se_poi_e8ad94dd",
+    "poi_name": "KeyBank",
+    "has_rtk_label": false,
+    "t_pred": 0.3242630660533905,
+    "t_true": 0.40857142210006714,
+    "facade_length_m": 2.9861600399017334,
+    "error_t": 0.08430835604667664,
+    "error_m": 0.25175824761390686
+  },
+  {
+    "sample_id": "v3se_poi_89a22671",
+    "poi_name": "Cooperative Institute for Research in Environmental Sciences",
+    "has_rtk_label": false,
+    "t_pred": 0.008299078792333603,
+    "t_true": 0.0,
+    "facade_length_m": 2.1164894104003906,
+    "error_t": 0.008299078792333603,
+    "error_m": 0.017564913257956505
+  },
+  {
+    "sample_id": "v3se_poi_0c1468e7",
+    "poi_name": "The Singing Cook",
+    "has_rtk_label": true,
+    "t_pred": 0.1440238654613495,
+    "t_true": 0.22434508800506592,
+    "facade_length_m": 12.824790000915527,
+    "error_t": 0.08032122254371643,
+    "error_m": 1.0301028490066528
+  },
+  {
+    "sample_id": "v3se_poi_888ee375",
+    "poi_name": "Boulder Valley Ranch Loop",
+    "has_rtk_label": false,
+    "t_pred": 0.0081973597407341,
+    "t_true": 1.0,
+    "facade_length_m": 4.103572368621826,
+    "error_t": 0.9918026328086853,
+    "error_m": 4.069933891296387
+  },
+  {
+    "sample_id": "v3se_poi_6979638e",
+    "poi_name": "Louisville Preschool Inc",
+    "has_rtk_label": false,
+    "t_pred": 0.9964978694915771,
+    "t_true": 1.0,
+    "facade_length_m": 3.3717825412750244,
+    "error_t": 0.0035021305084228516,
+    "error_m": 0.011808422394096851
+  },
+  {
+    "sample_id": "v3se_poi_9eccc567",
+    "poi_name": "Backcountry Pizza & Taphouse",
+    "has_rtk_label": false,
+    "t_pred": 0.4122268855571747,
+    "t_true": 0.3503173887729645,
+    "facade_length_m": 30.53936004638672,
+    "error_t": 0.061909496784210205,
+    "error_m": 1.8906763792037964
+  },
+  {
+    "sample_id": "v3se_poi_58aeefa4",
+    "poi_name": "Alpine Base & Edge - Ski Shop, Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.5661932826042175,
+    "t_true": 0.46653443574905396,
+    "facade_length_m": 4.976637840270996,
+    "error_t": 0.09965884685516357,
+    "error_m": 0.49596598744392395
+  },
+  {
+    "sample_id": "v3se_poi_a5e50901",
+    "poi_name": "Mabel and Moss",
+    "has_rtk_label": true,
+    "t_pred": 0.2604633867740631,
+    "t_true": 0.2582769989967346,
+    "facade_length_m": 15.053386688232422,
+    "error_t": 0.002186387777328491,
+    "error_m": 0.032912541180849075
+  },
+  {
+    "sample_id": "v3se_poi_312c20c3",
+    "poi_name": "Mountain Sun Pub & Brewery",
+    "has_rtk_label": false,
+    "t_pred": 0.0907834991812706,
+    "t_true": 0.0,
+    "facade_length_m": 1.633528709411621,
+    "error_t": 0.0907834991812706,
+    "error_m": 0.14829745888710022
+  },
+  {
+    "sample_id": "v3se_poi_af478fc3",
+    "poi_name": "Barker Park",
+    "has_rtk_label": false,
+    "t_pred": 0.013776415959000587,
+    "t_true": 0.002956130774691701,
+    "facade_length_m": 24.3748779296875,
+    "error_t": 0.01082028541713953,
+    "error_m": 0.263743132352829
+  },
+  {
+    "sample_id": "v3se_poi_05adf927",
+    "poi_name": "weShip Store",
+    "has_rtk_label": false,
+    "t_pred": 0.28455832600593567,
+    "t_true": 0.27296754717826843,
+    "facade_length_m": 10.524038314819336,
+    "error_t": 0.011590778827667236,
+    "error_m": 0.12198179960250854
+  },
+  {
+    "sample_id": "v3se_poi_6257a108",
+    "poi_name": "Kelly Eyen",
+    "has_rtk_label": false,
+    "t_pred": 0.9048073887825012,
+    "t_true": 0.0,
+    "facade_length_m": 2.6271519660949707,
+    "error_t": 0.9048073887825012,
+    "error_m": 2.3770666122436523
+  },
+  {
+    "sample_id": "v3se_poi_731527e7",
+    "poi_name": "The Little Jewel",
+    "has_rtk_label": false,
+    "t_pred": 0.5586522221565247,
+    "t_true": 0.5508349537849426,
+    "facade_length_m": 2.4675822257995605,
+    "error_t": 0.007817268371582031,
+    "error_m": 0.01928975246846676
+  },
+  {
+    "sample_id": "v3se_poi_99199e80",
+    "poi_name": "John Atencio",
+    "has_rtk_label": true,
+    "t_pred": 0.35707709193229675,
+    "t_true": 0.3831132650375366,
+    "facade_length_m": 71.8212661743164,
+    "error_t": 0.026036173105239868,
+    "error_m": 1.8699508905410767
+  },
+  {
+    "sample_id": "v3se_poi_42e39938",
+    "poi_name": "Flatirons Bank",
+    "has_rtk_label": false,
+    "t_pred": 0.03748311474919319,
+    "t_true": 0.910027265548706,
+    "facade_length_m": 2.1962599754333496,
+    "error_t": 0.8725441694259644,
+    "error_m": 1.916333794593811
+  },
+  {
+    "sample_id": "v3se_poi_daac75f4",
+    "poi_name": "Grease Monkey",
+    "has_rtk_label": false,
+    "t_pred": 0.4663594961166382,
+    "t_true": 0.4333879351615906,
+    "facade_length_m": 16.77606201171875,
+    "error_t": 0.03297156095504761,
+    "error_m": 0.553132951259613
+  },
+  {
+    "sample_id": "v3se_poi_ec586245",
+    "poi_name": "740 Front",
+    "has_rtk_label": true,
+    "t_pred": 0.9985036849975586,
+    "t_true": 0.8637008666992188,
+    "facade_length_m": 3.9923291206359863,
+    "error_t": 0.13480281829833984,
+    "error_m": 0.5381771922111511
+  },
+  {
+    "sample_id": "v3se_poi_20d0e74b",
+    "poi_name": "Cost Plus World Market",
+    "has_rtk_label": false,
+    "t_pred": 0.006920285988599062,
+    "t_true": 0.0,
+    "facade_length_m": 15.718976020812988,
+    "error_t": 0.006920285988599062,
+    "error_m": 0.10877981036901474
+  },
+  {
+    "sample_id": "v3se_poi_6037e1de",
+    "poi_name": "Haven",
+    "has_rtk_label": true,
+    "t_pred": 0.7636494040489197,
+    "t_true": 0.7545271515846252,
+    "facade_length_m": 15.053386688232422,
+    "error_t": 0.009122252464294434,
+    "error_m": 0.13732078671455383
+  },
+  {
+    "sample_id": "v3se_poi_23a3829d",
+    "poi_name": "Origin CPA Group",
+    "has_rtk_label": true,
+    "t_pred": 0.3513842225074768,
+    "t_true": 0.6335063576698303,
+    "facade_length_m": 10.52032470703125,
+    "error_t": 0.2821221351623535,
+    "error_m": 2.9680163860321045
+  },
+  {
+    "sample_id": "v3se_poi_8ba67659",
+    "poi_name": "South Street Market",
+    "has_rtk_label": true,
+    "t_pred": 0.17960211634635925,
+    "t_true": 0.1897198110818863,
+    "facade_length_m": 14.694398880004883,
+    "error_t": 0.010117694735527039,
+    "error_m": 0.14867344498634338
+  },
+  {
+    "sample_id": "v3se_poi_0e9f046b",
+    "poi_name": "Louisville Public Library",
+    "has_rtk_label": true,
+    "t_pred": 0.19558078050613403,
+    "t_true": 0.714476466178894,
+    "facade_length_m": 13.214016914367676,
+    "error_t": 0.51889568567276,
+    "error_m": 6.856696605682373
+  },
+  {
+    "sample_id": "v3se_poi_1c7c7e3f",
+    "poi_name": "Zinn Cycles Inc.",
+    "has_rtk_label": false,
+    "t_pred": 0.512070894241333,
+    "t_true": 1.0,
+    "facade_length_m": 1.6376347541809082,
+    "error_t": 0.487929105758667,
+    "error_m": 0.7990496754646301
+  },
+  {
+    "sample_id": "v3se_poi_9ad044d4",
+    "poi_name": "Mountain High Appliance",
+    "has_rtk_label": false,
+    "t_pred": 0.0030722266528755426,
+    "t_true": 0.0049720690585672855,
+    "facade_length_m": 2.9308063983917236,
+    "error_t": 0.001899842405691743,
+    "error_m": 0.005568070337176323
+  },
+  {
+    "sample_id": "v3se_poi_b89d20ae",
+    "poi_name": "Crate and Barrel",
+    "has_rtk_label": false,
+    "t_pred": 0.4060307443141937,
+    "t_true": 0.4984928369522095,
+    "facade_length_m": 18.010929107666016,
+    "error_t": 0.09246209263801575,
+    "error_m": 1.6653281450271606
+  },
+  {
+    "sample_id": "v3se_poi_a6a216e1",
+    "poi_name": "East Simpson Coffee Company",
+    "has_rtk_label": false,
+    "t_pred": 0.004130251705646515,
+    "t_true": 0.00010990815644618124,
+    "facade_length_m": 4.1194047927856445,
+    "error_t": 0.004020343534648418,
+    "error_m": 0.016561422497034073
+  },
+  {
+    "sample_id": "v3se_poi_31d1d6aa",
+    "poi_name": "Little Horse Books and Vintage",
+    "has_rtk_label": true,
+    "t_pred": 0.5929138660430908,
+    "t_true": 0.398095965385437,
+    "facade_length_m": 19.09273910522461,
+    "error_t": 0.1948179006576538,
+    "error_m": 3.719607353210449
+  },
+  {
+    "sample_id": "v3se_poi_42f308e3",
+    "poi_name": "Bobolink Trailhead",
+    "has_rtk_label": false,
+    "t_pred": 0.0071021756157279015,
+    "t_true": 1.0,
+    "facade_length_m": 3.632747173309326,
+    "error_t": 0.9928978085517883,
+    "error_m": 3.6069467067718506
+  },
+  {
+    "sample_id": "v3se_poi_9f3ffed3",
+    "poi_name": "Los Dos Bros Taqueria",
+    "has_rtk_label": false,
+    "t_pred": 0.0028487525414675474,
+    "t_true": 1.0,
+    "facade_length_m": 4.44277286529541,
+    "error_t": 0.997151255607605,
+    "error_m": 4.430116653442383
+  },
+  {
+    "sample_id": "v3se_poi_5ef8579e",
+    "poi_name": "Moxie Bread Co.",
+    "has_rtk_label": true,
+    "t_pred": 0.09574610739946365,
+    "t_true": 0.5082191824913025,
+    "facade_length_m": 7.313724040985107,
+    "error_t": 0.41247308254241943,
+    "error_m": 3.016714334487915
+  },
+  {
+    "sample_id": "v3se_poi_60962038",
+    "poi_name": "Boulder Packaging Center",
+    "has_rtk_label": false,
+    "t_pred": 0.2583063840866089,
+    "t_true": 0.2617133855819702,
+    "facade_length_m": 37.627193450927734,
+    "error_t": 0.003407001495361328,
+    "error_m": 0.12819591164588928
+  },
+  {
+    "sample_id": "v3se_poi_acc832b4",
+    "poi_name": "Verde",
+    "has_rtk_label": true,
+    "t_pred": 0.1563585251569748,
+    "t_true": 0.2777237296104431,
+    "facade_length_m": 1.5612438917160034,
+    "error_t": 0.12136520445346832,
+    "error_m": 0.18948067724704742
+  },
+  {
+    "sample_id": "v3se_poi_7c8a5035",
+    "poi_name": "Sundown Saloon",
+    "has_rtk_label": true,
+    "t_pred": 0.06072230637073517,
+    "t_true": 0.0,
+    "facade_length_m": 15.392802238464355,
+    "error_t": 0.06072230637073517,
+    "error_m": 0.9346864819526672
+  },
+  {
+    "sample_id": "v3se_poi_1f53ce69",
+    "poi_name": "Michael Hughes - milehimodern - Boulder",
+    "has_rtk_label": false,
+    "t_pred": 0.6706372499465942,
+    "t_true": 0.6649779677391052,
+    "facade_length_m": 31.493894577026367,
+    "error_t": 0.005659282207489014,
+    "error_m": 0.1782328337430954
+  },
+  {
+    "sample_id": "v3se_poi_dd7c33d6",
+    "poi_name": "North Boulder Recreation Center",
+    "has_rtk_label": false,
+    "t_pred": 0.04737180471420288,
+    "t_true": 0.0,
+    "facade_length_m": 6.069272518157959,
+    "error_t": 0.04737180471420288,
+    "error_m": 0.2875123918056488
+  },
+  {
+    "sample_id": "v3se_poi_d117e989",
+    "poi_name": "Weekends",
+    "has_rtk_label": false,
+    "t_pred": 0.004729441832751036,
+    "t_true": 0.9935410022735596,
+    "facade_length_m": 8.373515129089355,
+    "error_t": 0.9888115525245667,
+    "error_m": 8.279828071594238
+  },
+  {
+    "sample_id": "v3se_poi_ecacea17",
+    "poi_name": "Carolina's Alterations",
+    "has_rtk_label": false,
+    "t_pred": 0.8449158072471619,
+    "t_true": 0.8436020612716675,
+    "facade_length_m": 5.288089275360107,
+    "error_t": 0.0013137459754943848,
+    "error_m": 0.006947205867618322
+  },
+  {
+    "sample_id": "v3se_poi_651a47e7",
+    "poi_name": "Acme Fine Goods",
+    "has_rtk_label": true,
+    "t_pred": 0.004211936611682177,
+    "t_true": 0.0,
+    "facade_length_m": 10.018978118896484,
+    "error_t": 0.004211936611682177,
+    "error_m": 0.04219930246472359
+  },
+  {
+    "sample_id": "v3se_poi_4206c741",
+    "poi_name": "Leaf Vegetarian Restaurant",
+    "has_rtk_label": false,
+    "t_pred": 0.6406666040420532,
+    "t_true": 0.6598412394523621,
+    "facade_length_m": 14.430529594421387,
+    "error_t": 0.019174635410308838,
+    "error_m": 0.27670013904571533
+  },
+  {
+    "sample_id": "v3se_poi_464071e9",
+    "poi_name": "prAna",
+    "has_rtk_label": true,
+    "t_pred": 0.9517520070075989,
+    "t_true": 0.9541624188423157,
+    "facade_length_m": 1.6360752582550049,
+    "error_t": 0.002410411834716797,
+    "error_m": 0.00394361512735486
+  },
+  {
+    "sample_id": "v3se_poi_c58a9916",
+    "poi_name": "Island Farm",
+    "has_rtk_label": true,
+    "t_pred": 0.4503301680088043,
+    "t_true": 0.4581198990345001,
+    "facade_length_m": 7.068693161010742,
+    "error_t": 0.007789731025695801,
+    "error_m": 0.055063217878341675
+  },
+  {
+    "sample_id": "v3se_poi_af548454",
+    "poi_name": "Por Wine House",
+    "has_rtk_label": true,
+    "t_pred": 0.4677553176879883,
+    "t_true": 0.5513181686401367,
+    "facade_length_m": 5.84519624710083,
+    "error_t": 0.08356285095214844,
+    "error_m": 0.48844125866889954
+  },
+  {
+    "sample_id": "v3se_poi_8a99f093",
+    "poi_name": "Assorted Goods and Candy",
+    "has_rtk_label": true,
+    "t_pred": 0.5446082353591919,
+    "t_true": 0.4751721918582916,
+    "facade_length_m": 14.074984550476074,
+    "error_t": 0.06943604350090027,
+    "error_m": 0.9773112535476685
+  },
+  {
+    "sample_id": "v3se_poi_d55514e5",
+    "poi_name": "Cosmo's Pizza",
+    "has_rtk_label": false,
+    "t_pred": 0.9981817007064819,
+    "t_true": 0.9998682141304016,
+    "facade_length_m": 14.15488052368164,
+    "error_t": 0.0016865134239196777,
+    "error_m": 0.02387239597737789
+  },
+  {
+    "sample_id": "v3se_poi_57167822",
+    "poi_name": "Shell",
+    "has_rtk_label": false,
+    "t_pred": 0.5467879176139832,
+    "t_true": 0.5686854124069214,
+    "facade_length_m": 21.189754486083984,
+    "error_t": 0.021897494792938232,
+    "error_m": 0.4640025496482849
+  },
+  {
+    "sample_id": "v3se_poi_26a5c282",
+    "poi_name": "Colorado Plastics",
+    "has_rtk_label": false,
+    "t_pred": 0.5373017191886902,
+    "t_true": 0.5435817241668701,
+    "facade_length_m": 45.624290466308594,
+    "error_t": 0.006280004978179932,
+    "error_m": 0.286520779132843
+  },
+  {
+    "sample_id": "v3se_poi_b0ffd9b6",
+    "poi_name": "Subway",
+    "has_rtk_label": false,
+    "t_pred": 0.9981427192687988,
+    "t_true": 0.9881015419960022,
+    "facade_length_m": 3.6741936206817627,
+    "error_t": 0.01004117727279663,
+    "error_m": 0.03689322993159294
+  },
+  {
+    "sample_id": "v3se_poi_dc0f8cef",
+    "poi_name": "Savannah Bee Company",
+    "has_rtk_label": false,
+    "t_pred": 0.7184399962425232,
+    "t_true": 0.7236359715461731,
+    "facade_length_m": 15.121452331542969,
+    "error_t": 0.005195975303649902,
+    "error_m": 0.07857069373130798
+  },
+  {
+    "sample_id": "v3se_poi_1a647a1f",
+    "poi_name": "YoGallery Wellness",
+    "has_rtk_label": true,
+    "t_pred": 0.6170104146003723,
+    "t_true": 0.5998553037643433,
+    "facade_length_m": 66.74803161621094,
+    "error_t": 0.017155110836029053,
+    "error_m": 1.1450698375701904
+  },
+  {
+    "sample_id": "v3se_poi_8661baa9",
+    "poi_name": "Fat Shack",
+    "has_rtk_label": false,
+    "t_pred": 0.5086350440979004,
+    "t_true": 0.4617707133293152,
+    "facade_length_m": 7.703514099121094,
+    "error_t": 0.046864330768585205,
+    "error_m": 0.361020028591156
+  },
+  {
+    "sample_id": "v3se_poi_1894a9c7",
+    "poi_name": "WONDER Press",
+    "has_rtk_label": true,
+    "t_pred": 0.7983703017234802,
+    "t_true": 0.6202713847160339,
+    "facade_length_m": 9.089306831359863,
+    "error_t": 0.1780989170074463,
+    "error_m": 1.6187957525253296
+  },
+  {
+    "sample_id": "v3se_poi_2277240f",
+    "poi_name": "Long's Gardens",
+    "has_rtk_label": false,
+    "t_pred": 0.4913366436958313,
+    "t_true": 0.47298577427864075,
+    "facade_length_m": 17.984241485595703,
+    "error_t": 0.018350869417190552,
+    "error_m": 0.3300264775753021
+  },
+  {
+    "sample_id": "v3se_poi_c2c4f146",
+    "poi_name": "MOD Pizza",
+    "has_rtk_label": false,
+    "t_pred": 0.9910116195678711,
+    "t_true": 0.9951857924461365,
+    "facade_length_m": 1.2514808177947998,
+    "error_t": 0.004174172878265381,
+    "error_m": 0.005223897285759449
+  },
+  {
+    "sample_id": "v3se_poi_43dec8e1",
+    "poi_name": "M. Gerwing Architects",
+    "has_rtk_label": false,
+    "t_pred": 0.6567133069038391,
+    "t_true": 0.6358213424682617,
+    "facade_length_m": 61.42885971069336,
+    "error_t": 0.020891964435577393,
+    "error_m": 1.283369541168213
+  },
+  {
+    "sample_id": "v3se_poi_757501bc",
+    "poi_name": "Shell",
+    "has_rtk_label": false,
+    "t_pred": 0.6257185339927673,
+    "t_true": 0.343369722366333,
+    "facade_length_m": 28.179765701293945,
+    "error_t": 0.2823488116264343,
+    "error_m": 7.956523418426514
+  },
+  {
+    "sample_id": "v3se_poi_765dc5a0",
+    "poi_name": "Mici Italian",
+    "has_rtk_label": false,
+    "t_pred": 0.5500820875167847,
+    "t_true": 0.45449844002723694,
+    "facade_length_m": 25.578901290893555,
+    "error_t": 0.09558364748954773,
+    "error_m": 2.4449245929718018
+  },
+  {
+    "sample_id": "v3se_poi_9c58b8fa",
+    "poi_name": "Village Square Liquor",
+    "has_rtk_label": false,
+    "t_pred": 0.4261326193809509,
+    "t_true": 0.670276939868927,
+    "facade_length_m": 14.90034294128418,
+    "error_t": 0.24414432048797607,
+    "error_m": 3.637834072113037
+  },
+  {
+    "sample_id": "v3se_poi_295710fe",
+    "poi_name": "The Melting Pot",
+    "has_rtk_label": true,
+    "t_pred": 0.698415219783783,
+    "t_true": 0.3031589090824127,
+    "facade_length_m": 7.8039984703063965,
+    "error_t": 0.39525631070137024,
+    "error_m": 3.0845797061920166
+  },
+  {
+    "sample_id": "v3se_poi_7c2f125b",
+    "poi_name": "Eaton Humanities",
+    "has_rtk_label": false,
+    "t_pred": 0.2730107009410858,
+    "t_true": 0.28376999497413635,
+    "facade_length_m": 32.289981842041016,
+    "error_t": 0.010759294033050537,
+    "error_m": 0.347417414188385
+  },
+  {
+    "sample_id": "v3se_poi_4a4531f6",
+    "poi_name": "Gemini",
+    "has_rtk_label": true,
+    "t_pred": 0.01353880763053894,
+    "t_true": 0.0,
+    "facade_length_m": 15.346834182739258,
+    "error_t": 0.01353880763053894,
+    "error_m": 0.20777784287929535
+  },
+  {
+    "sample_id": "v3se_poi_056e2767",
+    "poi_name": "Moe's Broadway Bagel",
+    "has_rtk_label": false,
+    "t_pred": 0.735605001449585,
+    "t_true": 0.7405937910079956,
+    "facade_length_m": 74.67509460449219,
+    "error_t": 0.0049887895584106445,
+    "error_m": 0.37253832817077637
+  },
+  {
+    "sample_id": "v3se_poi_10d34730",
+    "poi_name": "Great Clips",
+    "has_rtk_label": false,
+    "t_pred": 0.37689387798309326,
+    "t_true": 0.3803471624851227,
+    "facade_length_m": 50.88142013549805,
+    "error_t": 0.003453284502029419,
+    "error_m": 0.17570802569389343
+  },
+  {
+    "sample_id": "v3se_poi_e30bb7a7",
+    "poi_name": "Wells Fargo Bank",
+    "has_rtk_label": false,
+    "t_pred": 0.504510760307312,
+    "t_true": 0.5,
+    "facade_length_m": 16.954296112060547,
+    "error_t": 0.004510760307312012,
+    "error_m": 0.07647676765918732
+  },
+  {
+    "sample_id": "v3se_poi_612fffb8",
+    "poi_name": "Vitality Bowls",
+    "has_rtk_label": false,
+    "t_pred": 0.25953322649002075,
+    "t_true": 0.7441071271896362,
+    "facade_length_m": 12.122775077819824,
+    "error_t": 0.4845739006996155,
+    "error_m": 5.874380588531494
+  },
+  {
+    "sample_id": "v3se_poi_454cf47f",
+    "poi_name": "Shell",
+    "has_rtk_label": false,
+    "t_pred": 0.022351086139678955,
+    "t_true": 0.0,
+    "facade_length_m": 3.371335744857788,
+    "error_t": 0.022351086139678955,
+    "error_m": 0.07535301893949509
+  },
+  {
+    "sample_id": "v3se_poi_b6e394ee",
+    "poi_name": "Baseline Liquors",
+    "has_rtk_label": false,
+    "t_pred": 0.9825150966644287,
+    "t_true": 0.0,
+    "facade_length_m": 7.436195373535156,
+    "error_t": 0.9825150966644287,
+    "error_m": 7.306174278259277
+  },
+  {
+    "sample_id": "v3se_poi_1fe75c4f",
+    "poi_name": "Chad Thielen: Allstate Insurance",
+    "has_rtk_label": true,
+    "t_pred": 0.6384608745574951,
+    "t_true": 0.7254461646080017,
+    "facade_length_m": 16.442142486572266,
+    "error_t": 0.08698529005050659,
+    "error_m": 1.4302245378494263
+  },
+  {
+    "sample_id": "v3se_poi_5148b0b0",
+    "poi_name": "Zoe Ma Ma",
+    "has_rtk_label": true,
+    "t_pred": 0.9928096532821655,
+    "t_true": 1.0,
+    "facade_length_m": 22.28516387939453,
+    "error_t": 0.007190346717834473,
+    "error_m": 0.16023805737495422
+  }
+]
