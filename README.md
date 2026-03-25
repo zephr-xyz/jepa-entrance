@@ -30,23 +30,23 @@ The model follows a JEPA (Joint-Embedding Predictive Architecture) training para
 
 ```
 ┌─────────────────────────────────────────────────┐
-│                Context Encoder                    │
-│  DINOv2 patch embeddings (16×1024 per image)     │
-│  + Facade-t positional encoding (per patch col)  │
-│  + Camera pose tokens (8-dim per image)          │
-│  + Self-attention across K images                │
-│  → z_visual (128-dim)                            │
+│                Context Encoder                  │
+│  DINOv2 patch embeddings (16×1024 per image)    │
+│  + Facade-t positional encoding (per patch col) │
+│  + Camera pose tokens (8-dim per image)         │
+│  + Self-attention across K images               │
+│  → z_visual (128-dim)                           │
 └───────────────────────┬─────────────────────────┘
                         │
                         ▼
 ┌──────────────────────────────────────────────────┐
-│               Predictor (AdaLN)                   │
+│               Predictor (AdaLN)                  │
 │  z_visual → ẑ_geo, conditioned on facade feats   │
-│  → Entrance Head: ẑ_geo → t_pred ∈ [0,1]        │
+│  → Entrance Head: ẑ_geo → t_pred ∈ [0,1]         │
 └──────────────────────────────────────────────────┘
                         ↕ MSE loss
 ┌──────────────────────────────────────────────────┐
-│               Target Encoder                      │
+│               Target Encoder                     │
 │  Facade geometry (32-dim) + entrance_t → z_geo   │
 └──────────────────────────────────────────────────┘
 ```
