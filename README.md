@@ -17,21 +17,6 @@ Evaluated on 72 POIs with RTK-precision ground truth (centimeter-level GPS measu
 
 The JEPA model reduces MAE by 20% and P90 by 41% compared to the midpoint baseline.
 
-### Facade Stopping Comparison
-
-The facade stopping approach (adapted from [overture_project PR #8](https://github.com/zephr-xyz/overture_project/pull/8)) casts rays from multiple camera positions through a target point and finds where they intersect the building polygon. When given the ground truth entrance as the ray target, this achieves 2.43m MAE — showing the geometric precision of multi-camera ray-tracing.
-
-However, combining JEPA predictions with facade stopping (using JEPA's predicted point as the ray target) performs worse than JEPA alone (6.74m vs 3.80m). JEPA's prediction errors get amplified by the ray-tracing step rather than refined.
-
-| Approach | RTK MAE | RTK Median | RTK P90 |
-|----------|---------|------------|---------|
-| Facade midpoint (t=0.5) | 4.78m | 2.64m | 13.15m |
-| **JEPA t_pred on facade** | **3.80m** | **1.89m** | **7.72m** |
-| Facade stopping + GT target | 2.43m | 0.58m | 5.33m |
-| JEPA + facade stopping | 6.74m | 5.35m | 13.56m |
-
-The takeaway: JEPA is best used to directly predict the entrance position on the facade, not as a ray-tracing target. The 2.43m "facade stopping + GT" result represents the geometric ceiling — the best possible if we already knew the entrance location.
-
 ## Architecture
 
 The model follows a JEPA (Joint-Embedding Predictive Architecture) training paradigm with four components:
@@ -134,7 +119,6 @@ python predict_entrances.py \
 | `predict_entrances.py` | Full-dataset entrance prediction |
 | `geometry.py` | Camera-to-facade geometry: HFOV, pose features, ray-facade intersection |
 | `facade.py` | Composite facade detection (experimental) |
-| `facade_stopping.py` | Facade stopping baseline (from overture_project PR #8) |
 | `dataset.py` | Single-edge facade computation |
 | `build_s3_index.py` | S3 image_id → sequence_id lookup builder |
 | `prepare_dataset_v3_singleedge.py` | Dataset builder: fetches embeddings, computes geometry |
