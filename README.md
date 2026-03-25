@@ -10,14 +10,19 @@ Given a building and its associated Mapillary images, the model predicts where t
 
 Evaluated on 72 POIs with RTK-precision ground truth (centimeter-level GPS measurements of actual front door locations) in Louisville, KY and Boulder, CO:
 
-| Metric | Value |
-|--------|-------|
-| **MAE** | **1.96m** |
-| **Median error** | **0.43m** |
-| **P90 error** | ~6.5m |
-| **Improvement over baseline** | 43.6% |
+| Metric | Along-facade (1D) | Geographic (2D) |
+|--------|:-----------------:|:---------------:|
+| **MAE** | **1.96m** | **3.80m** |
+| **Median error** | **0.43m** | **1.89m** |
+| **P90 error** | ~6.5m | ~8.5m |
 
-The baseline is predicting the facade midpoint (`t = 0.5`), which gives an MAE of 3.85m.
+**Along-facade error** measures `|t_pred - t_true| × facade_length` — the model's prediction error projected onto the facade edge. This is the metric the model directly optimizes.
+
+**Geographic error** measures the haversine distance between the predicted lat/lon and the actual RTK entrance location. This is higher because actual entrances are not exactly on the facade edge line — the average perpendicular distance from the door to the selected facade edge is ~2.2m, and this offset is included in the geographic error even for a perfect `t` prediction.
+
+The geographic metric is the more practically relevant one — it represents how far the predicted entrance point is from the real door. The along-facade metric isolates the model's learned contribution.
+
+The baseline (predicting the facade midpoint, `t = 0.5`) gives an along-facade MAE of 3.85m, so the model achieves a 43.6% improvement.
 
 ## Architecture
 
