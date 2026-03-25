@@ -12,10 +12,10 @@ Evaluated on 72 POIs with RTK-precision ground truth (centimeter-level GPS measu
 
 | Approach | MAE | Median | P90 |
 |----------|-----|--------|-----|
-| Facade midpoint (t=0.5) | 4.78m | 2.64m | 13.15m |
-| **JEPA facade-t prediction** | **3.80m** | **1.89m** | **7.72m** |
+| Facade midpoint (t=0.5) | 5.21m | 3.18m | 14.67m |
+| **JEPA facade-t prediction** | **3.45m** | **1.91m** | **7.46m** |
 
-The JEPA model reduces MAE by 20% and P90 by 41% compared to the midpoint baseline.
+The JEPA model reduces MAE by 34% and P90 by 49% compared to the midpoint baseline.
 
 ## Architecture
 
