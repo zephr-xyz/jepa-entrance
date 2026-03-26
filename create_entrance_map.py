@@ -174,9 +174,9 @@ def main():
             <tr><td>MAE</td><td>{stats['mae']:.2f}m</td><td>{stats['mid_mae']:.2f}m</td></tr>
             <tr><td>Median</td><td>{stats['median']:.2f}m</td><td>{stats['mid_median']:.2f}m</td></tr>
             <tr><td>P90</td><td>{stats['p90']:.2f}m</td><td>{stats['mid_p90']:.2f}m</td></tr>
-            <tr><td>&lt;1m</td><td>{stats['lt1']}/{n}</td><td></td></tr>
-            <tr><td>&lt;2m</td><td>{stats['lt2']}/{n}</td><td></td></tr>
-            <tr><td>&lt;5m</td><td>{stats['lt5']}/{n}</td><td></td></tr>
+            <tr><td>&lt;1m</td><td>{stats['lt1']/n*100:.0f}%</td><td></td></tr>
+            <tr><td>&lt;2m</td><td>{stats['lt2']/n*100:.0f}%</td><td></td></tr>
+            <tr><td>&lt;5m</td><td>{stats['lt5']/n*100:.0f}%</td><td></td></tr>
         </table>
         <div class="legend">
             <div class="legend-item"><div class="legend-dot" style="background:#2196F3"></div>Ground Truth (RTK)</div>

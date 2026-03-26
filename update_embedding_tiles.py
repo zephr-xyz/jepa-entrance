@@ -97,11 +97,26 @@ class RoadGrid:
         return self.grid.get((cx, cy), [])
 
 
-def label_building_edges(bld_lnglat, road_grid, max_dist_m=30.0):
-    """Label each building edge with its nearest street name.
+def _angle_between(dx1, dy1, dx2, dy2):
+    """Acute angle in degrees between two direction vectors (0-90)."""
+    dot = dx1 * dx2 + dy1 * dy2
+    m1 = math.sqrt(dx1 * dx1 + dy1 * dy1)
+    m2 = math.sqrt(dx2 * dx2 + dy2 * dy2)
+    if m1 < 0.01 or m2 < 0.01:
+        return 90.0
+    cos_a = max(-1.0, min(1.0, dot / (m1 * m2)))
+    angle = math.degrees(math.acos(abs(cos_a)))
+    return angle
+
+
+def label_building_edges(bld_lnglat, road_grid, max_dist_m=30.0, max_angle_deg=45.0):
+    """Label each building edge with its nearest parallel street name.
+
+    Only labels an edge if it is roughly parallel to the road segment
+    (within max_angle_deg). This prevents side walls from being labeled
+    with the street they happen to be near but don't face.
 
     Returns dict mapping edge_index -> street_name_norm.
-    Mirrors PR #8's facades_by_street approach.
     """
     if len(bld_lnglat) < 3:
         return {}
@@ -133,6 +148,12 @@ def label_building_edges(bld_lnglat, road_grid, max_dist_m=30.0):
                     (sa_lat - cent_lat) * METERS_PER_DEG_LAT]
             sb_m = [(sb_lon - cent_lng) * m_per_deg_lng,
                     (sb_lat - cent_lat) * METERS_PER_DEG_LAT]
+            # Check edge is roughly parallel to road segment
+            rdx = sb_m[0] - sa_m[0]
+            rdy = sb_m[1] - sa_m[1]
+            angle = _angle_between(edx, edy, rdx, rdy)
+            if angle > max_angle_deg:
+                continue
             dist, _ = _point_to_segment_dist_m(
                 mid_m[0], mid_m[1], sa_m[0], sa_m[1], sb_m[0], sb_m[1])
             if dist < best_dist:
@@ -317,18 +338,25 @@ def main():
                 edge_labels = bld_edge_labels[bld_id]
 
                 # Find edges matching the POI's address street
+                # Use prefix matching: "pearl street" matches "pearl street mall"
                 matching_edges = [idx for idx, street in edge_labels.items()
-                                  if street == addr_street]
+                                  if street == addr_street
+                                  or street.startswith(addr_street + ' ')
+                                  or addr_street.startswith(street + ' ')]
 
                 if matching_edges:
-                    # Snap to the matching edge closest to the reference point
+                    # Pick the longest matching edge (main facade)
                     best_idx = matching_edges[0]
-                    best_dist = float('inf')
+                    best_len = 0.0
+                    cos_lat_local = math.cos(bld_lnglat[0][1] * DEG_TO_RAD)
                     for idx in matching_edges:
-                        lat, lon = snap_to_edge(ref_lat, ref_lon, bld_lnglat, idx)
-                        d = math.sqrt((lat - ref_lat) ** 2 + (lon - ref_lon) ** 2)
-                        if d < best_dist:
-                            best_dist = d
+                        a_ll = bld_lnglat[idx]
+                        b_ll = bld_lnglat[idx + 1]
+                        dx = (b_ll[0] - a_ll[0]) * METERS_PER_DEG_LAT * cos_lat_local
+                        dy = (b_ll[1] - a_ll[1]) * METERS_PER_DEG_LAT
+                        elen = math.sqrt(dx * dx + dy * dy)
+                        if elen > best_len:
+                            best_len = elen
                             best_idx = idx
                     lat, lon = snap_to_edge(ref_lat, ref_lon, bld_lnglat, best_idx)
                     wp['entrance_lat'] = lat
