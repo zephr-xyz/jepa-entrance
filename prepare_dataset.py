@@ -1,22 +1,8 @@
 """
-Prepare training dataset by pulling features from three sources:
-  1. embedding-tiles (POI metadata, entrance coords, building IDs)
-  2. s3://zephr-mapillary-computed-data/ (DINOv2, caption, keypoint embeddings)
-  3. zephr-maps data/ (building footprints)
+Prepare dataset for JEPA entrance prediction.
 
-Optionally uses RTK ground truth labels (ground_truth_labels.json) to replace
-geometric entrance coordinates with sub-centimeter surveyed locations.
-RTK-labeled POIs go to validation set for measuring real-world accuracy.
-
-Usage:
-    python prepare_dataset.py \
-        --tiles-dir /path/to/embedding-tiles/embedding-tiles-overture-visual/z14 \
-        --buildings-json /path/to/zephr-maps/data/buildings.json \
-        --corrections-json /path/to/zephr-maps/data/entrance_corrections.json \
-        --s3-bucket zephr-mapillary-computed-data \
-        --output-dir /path/to/cache \
-        --ground-truth-labels ground_truth_labels.json \
-        --val-fraction 0.15
+Fetches DINOv2 patch embeddings from S3, computes camera-to-facade geometry,
+and builds per-sample caches. All 72 RTK-labeled samples go to validation.
 """
 import argparse
 import json
@@ -28,30 +14,32 @@ import boto3
 from io import BytesIO
 from pathlib import Path
 
-from dataset import (
-    compute_facade_and_entrance_t,
-    load_keypoint_stats,
+from dataset import compute_facade_and_entrance_t
+from geometry import (
+    camera_hfov_deg,
+    compute_camera_pose_features,
+    compute_patch_column_facade_t,
 )
 
+DEG_TO_RAD = math.pi / 180
+METERS_PER_DEG_LAT = 111320
+MAX_IMAGES = 15
+N_COLS = 16
 
-def load_embedding_tiles(tiles_dir: str):
-    """Load all POIs from embedding-tiles JSON files."""
+
+def load_embedding_tiles(tiles_dir):
     tiles_path = Path(tiles_dir)
     all_pois = []
-
     for json_file in sorted(tiles_path.glob('*.json')):
         with open(json_file) as f:
             tile = json.load(f)
-
         for wp in tile.get('waypoints', []):
-            # Must have entrance coords and mapillary images
             if not wp.get('entrance_lat') or not wp.get('entrance_lon'):
                 continue
             if not wp.get('mapillary_ids'):
                 continue
             if not wp.get('overture_building_id'):
                 continue
-
             all_pois.append({
                 'id': wp['id'],
                 'name': wp.get('name', ''),
@@ -63,34 +51,16 @@ def load_embedding_tiles(tiles_dir: str):
                 'overture_building_id': wp['overture_building_id'],
                 'enclosing_roads': wp.get('enclosing_roads', []),
             })
-
     print(f"Loaded {len(all_pois)} POIs with entrances + mapillary + buildings")
     return all_pois
 
 
-def load_buildings(buildings_json: str):
-    """Load building footprints from zephr-maps data."""
+def load_buildings(buildings_json):
     with open(buildings_json) as f:
-        buildings = json.load(f)
-    print(f"Loaded {len(buildings)} building footprints")
-    return buildings
+        return json.load(f)
 
 
-def load_corrections(corrections_json: str):
-    """Load entrance corrections (higher-quality labels)."""
-    if not os.path.exists(corrections_json):
-        return {}
-    with open(corrections_json) as f:
-        corrections = json.load(f)
-    print(f"Loaded {len(corrections)} entrance corrections")
-    return corrections
-
-
-def fetch_s3_features(s3_client, bucket, sequence_id, image_id):
-    """Fetch precomputed features for a single Mapillary image from S3.
-
-    Returns dict with cls_emb, caption_emb, keypoints, metadata or None.
-    """
+def fetch_image_features(s3_client, bucket, sequence_id, image_id):
     prefix = f"{sequence_id}/{image_id}/"
 
     def get_npz(key):
@@ -108,169 +78,125 @@ def fetch_s3_features(s3_client, bucket, sequence_id, image_id):
         except Exception:
             return None
 
-    cls_data = get_npz('cls_embedding.npz')
-    caption_data = get_npz('caption_embedding.npz')
-    kp_data = get_npz('keypoints.npz')
-    scores_data = get_npz('scores.npz')
+    patch_data = get_npz('patch_embeddings.npz')
     metadata = get_json('metadata.json')
 
-    if cls_data is None or metadata is None:
+    if patch_data is None or metadata is None:
         return None
 
-    # Extract the embedding arrays
-    cls_emb = None
-    for key in cls_data:
-        cls_emb = cls_data[key].flatten()
+    patches = None
+    for key in patch_data:
+        patches = patch_data[key]
         break
 
-    caption_emb = None
-    if caption_data:
-        for key in caption_data:
-            caption_emb = caption_data[key].flatten()
-            break
+    if patches is None:
+        return None
 
-    kp_dict = {}
-    if kp_data:
-        for key in kp_data:
-            kp_dict['keypoints'] = kp_data[key]
-            break
-    if scores_data:
-        for key in scores_data:
-            kp_dict['scores'] = scores_data[key]
-            break
+    patches = patches.astype(np.float32)
+
+    if patches.shape == (256, 1024):
+        patches_2d = patches.reshape(16, 16, 1024)
+        patch_strip = patches_2d.mean(axis=0)
+    elif patches.ndim == 2:
+        n = patches.shape[0]
+        side = int(math.sqrt(n))
+        if side * side == n:
+            patches_2d = patches.reshape(side, side, patches.shape[1])
+            if side >= 16:
+                col_size = side // 16
+                patch_strip = np.zeros((16, patches.shape[1]), dtype=np.float32)
+                for c in range(16):
+                    patch_strip[c] = patches_2d[:, c*col_size:(c+1)*col_size, :].mean(axis=(0, 1))
+            else:
+                patch_strip = np.zeros((16, patches.shape[1]), dtype=np.float32)
+                patch_strip[:side] = patches_2d.mean(axis=0)
+        else:
+            patch_strip = np.zeros((16, 1024), dtype=np.float32)
+            n_take = min(16, patches.shape[0])
+            patch_strip[:n_take] = patches[:n_take]
+    else:
+        return None
 
     return {
-        'cls_emb': cls_emb,
-        'caption_emb': caption_emb if caption_emb is not None else np.zeros(768, dtype=np.float32),
-        'keypoints': kp_dict,
+        'patch_strip': patch_strip,
         'metadata': metadata,
     }
 
 
-def find_image_on_s3(s3_client, bucket, image_id):
-    """Find the sequence folder for a given image ID by listing prefixes."""
-    # The S3 structure is {sequence_id}/{image_id}/
-    # We need to find which sequence contains this image
-    # Use S3 search with the image_id as a suffix pattern
-    paginator = s3_client.get_paginator('list_objects_v2')
+def get_single_edge_facade_geometry(building_coords, entrance_lat, entrance_lon):
+    """Get single-edge facade geometry in local meters for camera pose computation.
 
-    # Try listing with image_id as prefix at depth 2
-    # This is expensive; better to cache a lookup table
-    # For now, we'll try to find metadata.json for this image
-    try:
-        # Check if there's an index file
-        resp = s3_client.list_objects_v2(
-            Bucket=bucket,
-            Prefix=f"",
-            Delimiter='/',
-            MaxKeys=1
-        )
-    except Exception:
-        pass
-
-    return None  # Will use the lookup table approach
-
-
-def build_sequence_lookup(s3_client, bucket, image_ids):
-    """Build image_id → sequence_id lookup by scanning S3.
-
-    Since images are stored as {sequence_id}/{image_id}/, we need to
-    find which sequence each image belongs to. We do this by checking
-    the metadata files.
+    Returns dict with facade_a_m, facade_b_m, midpoint_m, normal,
+    centroid_lat, centroid_lon, or None.
     """
-    lookup = {}
-    total = len(image_ids)
+    if len(building_coords) < 3:
+        return None
 
-    # Check each image by trying common sequence prefixes
-    # This is the bottleneck - for production, pre-build this index
-    print(f"Building sequence lookup for {total} images...")
+    cent_lng = sum(c[0] for c in building_coords) / len(building_coords)
+    cent_lat = sum(c[1] for c in building_coords) / len(building_coords)
+    cos_lat = math.cos(cent_lat * DEG_TO_RAD)
+    m_per_deg_lng = METERS_PER_DEG_LAT * cos_lat
 
-    for i, img_id in enumerate(image_ids):
-        if i % 50 == 0:
-            print(f"  Scanning {i}/{total}...")
+    def to_m(coord):
+        return [(coord[0] - cent_lng) * m_per_deg_lng,
+                (coord[1] - cent_lat) * METERS_PER_DEG_LAT]
 
-        # Search for this image_id in S3
-        paginator = s3_client.get_paginator('list_objects_v2')
-        found = False
+    fp_m = [to_m(c) for c in building_coords]
+    ent_m = to_m([entrance_lon, entrance_lat])
+    poly_cx = sum(p[0] for p in fp_m) / len(fp_m)
+    poly_cy = sum(p[1] for p in fp_m) / len(fp_m)
 
-        # Try to find by searching for the metadata file
-        try:
-            for page in paginator.paginate(
-                Bucket=bucket,
-                Prefix="",
-                Delimiter='/',
-            ):
-                for prefix_info in page.get('CommonPrefixes', []):
-                    seq_id = prefix_info['Prefix'].rstrip('/')
-                    # Check if this sequence has our image
-                    try:
-                        s3_client.head_object(
-                            Bucket=bucket,
-                            Key=f"{seq_id}/{img_id}/metadata.json"
-                        )
-                        lookup[img_id] = seq_id
-                        found = True
-                        break
-                    except Exception:
-                        continue
-                if found:
-                    break
-        except Exception:
+    best_edge = None
+    best_score = float('inf')
+
+    for i in range(len(fp_m) - 1):
+        a, b = fp_m[i], fp_m[i + 1]
+        edx, edy = b[0] - a[0], b[1] - a[1]
+        length = math.sqrt(edx * edx + edy * edy)
+        if length < 0.3:
             continue
 
-    print(f"  Found sequences for {len(lookup)}/{total} images")
-    return lookup
+        nx, ny = -edy / length, edx / length
+        mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+        tcx, tcy = poly_cx - mx, poly_cy - my
+        if nx * tcx + ny * tcy > 0:
+            nx, ny = -nx, -ny
 
+        dx = ent_m[0] - mx
+        dy = ent_m[1] - my
+        dist = math.sqrt(dx * dx + dy * dy)
 
-def build_sequence_lookup_fast(s3_client, bucket, mapillary_master_json=None):
-    """Build lookup from mapillary_master.json which has sequence info,
-    or by scanning the S3 bucket index."""
-    lookup = {}
+        if dist < best_score:
+            best_score = dist
+            best_edge = {
+                'a': a, 'b': b, 'length': length,
+                'normal': [nx, ny],
+                'midpoint': [mx, my],
+            }
 
-    # Strategy: list all {seq}/{img}/metadata.json objects and parse
-    print("Building sequence lookup from S3 listing (this may take a while)...")
-    paginator = s3_client.get_paginator('list_objects_v2')
+    if best_edge is None:
+        return None
 
-    count = 0
-    for page in paginator.paginate(Bucket=bucket, Prefix="", Delimiter='/'):
-        for prefix_info in page.get('CommonPrefixes', []):
-            seq_id = prefix_info['Prefix'].rstrip('/')
-            # List images in this sequence
-            try:
-                img_page = s3_client.list_objects_v2(
-                    Bucket=bucket,
-                    Prefix=f"{seq_id}/",
-                    Delimiter='/',
-                    MaxKeys=1000
-                )
-                for img_prefix in img_page.get('CommonPrefixes', []):
-                    img_id = img_prefix['Prefix'].split('/')[1]
-                    lookup[img_id] = seq_id
-                    count += 1
-            except Exception:
-                continue
-
-        if count % 10000 == 0 and count > 0:
-            print(f"  Indexed {count} images...")
-
-    print(f"  Total indexed: {count} images across S3")
-    return lookup
+    return {
+        'facade_a_m': best_edge['a'],
+        'facade_b_m': best_edge['b'],
+        'midpoint_m': best_edge['midpoint'],
+        'normal': best_edge['normal'],
+        'centroid_lat': cent_lat,
+        'centroid_lon': cent_lng,
+    }
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tiles-dir', required=True,
-                        help='Path to embedding-tiles-overture-visual/z14/')
-    parser.add_argument('--buildings-json', required=True,
-                        help='Path to zephr-maps/data/buildings.json')
-    parser.add_argument('--corrections-json', default='',
-                        help='Path to entrance_corrections.json')
+    parser.add_argument('--tiles-dir', required=True)
+    parser.add_argument('--buildings-json', required=True)
+    parser.add_argument('--corrections-json', default='')
+    parser.add_argument('--ground-truth-labels', default='')
     parser.add_argument('--s3-bucket', default='zephr-mapillary-computed-data')
-    parser.add_argument('--s3-index-cache', default='',
-                        help='Path to cached sequence lookup JSON')
+    parser.add_argument('--s3-index-cache', default='')
     parser.add_argument('--output-dir', required=True)
-    parser.add_argument('--ground-truth-labels', default='',
-                        help='Path to ground_truth_labels.json (RTK labels)')
+    parser.add_argument('--max-images-per-poi', type=int, default=MAX_IMAGES)
     parser.add_argument('--val-fraction', type=float, default=0.15)
     parser.add_argument('--seed', type=int, default=42)
     args = parser.parse_args()
@@ -278,182 +204,204 @@ def main():
     random.seed(args.seed)
     np.random.seed(args.seed)
 
-    # Load data sources
     pois = load_embedding_tiles(args.tiles_dir)
     buildings = load_buildings(args.buildings_json)
-    corrections = load_corrections(args.corrections_json) if args.corrections_json else {}
 
-    # Load RTK ground truth labels
+    # Load corrections
+    corrections = {}
+    if args.corrections_json and os.path.exists(args.corrections_json):
+        with open(args.corrections_json) as f:
+            corrections = json.load(f)
+        print(f"Loaded {len(corrections)} entrance corrections")
+
+    # Load RTK labels
     gt_labels = {}
     if args.ground_truth_labels and os.path.exists(args.ground_truth_labels):
         with open(args.ground_truth_labels) as f:
             gt_labels = json.load(f)
         print(f"Loaded {len(gt_labels)} RTK ground truth labels")
 
-    # Apply entrance corrections where available
-    corrections_by_id = {}
-    for poi_id, corr in corrections.items():
-        corrections_by_id[poi_id] = corr
-
-    for poi in pois:
-        if poi['id'] in corrections_by_id:
-            c = corrections_by_id[poi['id']]
-            poi['entrance_lat'] = c['entrance_lat']
-            poi['entrance_lon'] = c['entrance_lon']
-            if c.get('overture_building_id'):
-                poi['overture_building_id'] = c['overture_building_id']
-
-    # Apply RTK labels (override entrance coords with surveyed locations)
+    # Apply corrections then RTK labels
     rtk_poi_ids = set()
     for poi in pois:
+        if poi['id'] in corrections:
+            c = corrections[poi['id']]
+            poi['entrance_lat'] = c.get('entrance_lat', poi['entrance_lat'])
+            poi['entrance_lon'] = c.get('entrance_lon', poi['entrance_lon'])
         if poi['id'] in gt_labels:
             gt = gt_labels[poi['id']]
             poi['entrance_lat'] = gt['rtk_entrance_lat']
             poi['entrance_lon'] = gt['rtk_entrance_lon']
             poi['has_rtk_label'] = True
+            poi['rtk_source'] = gt.get('source', 'unknown')
             rtk_poi_ids.add(poi['id'])
     print(f"Applied RTK labels to {len(rtk_poi_ids)} POIs")
 
-    # Setup S3
+    # S3 setup
     s3 = boto3.client('s3')
-
-    # Build or load sequence lookup
+    seq_lookup = {}
     if args.s3_index_cache and os.path.exists(args.s3_index_cache):
         with open(args.s3_index_cache) as f:
             seq_lookup = json.load(f)
         print(f"Loaded sequence lookup: {len(seq_lookup)} entries")
-    else:
-        seq_lookup = build_sequence_lookup_fast(s3, args.s3_bucket)
-        if args.s3_index_cache:
-            with open(args.s3_index_cache, 'w') as f:
-                json.dump(seq_lookup, f)
-            print(f"Saved sequence lookup to {args.s3_index_cache}")
 
-    # Process each POI
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = []
-    skipped = {'no_building': 0, 'no_facade': 0, 'no_s3': 0, 'no_features': 0}
+    skipped = {'no_building': 0, 'no_facade': 0, 'no_s3': 0}
 
     for i, poi in enumerate(pois):
         if i % 100 == 0:
             print(f"\nProcessing POI {i}/{len(pois)}: {poi['name']}")
 
-        # Get building footprint
         bld_id = poi['overture_building_id']
         if bld_id not in buildings:
             skipped['no_building'] += 1
             continue
 
-        building_coords = buildings[bld_id]
-        if not building_coords or len(building_coords) < 3:
+        building_coords_raw = buildings[bld_id]
+        if not building_coords_raw or len(building_coords_raw) < 3:
             skipped['no_building'] += 1
             continue
 
-        # Convert building coords format: may be [[lat,lon],...] or [[lon,lat],...]
-        # zephr-maps uses [lat, lon] in buildings.json
-        # Our functions expect [lon, lat] (GeoJSON order)
-        bld_lnglat = [[c[1], c[0]] for c in building_coords]
+        # zephr-maps uses [lat, lon], convert to [lon, lat]
+        bld_lnglat = [[c[1], c[0]] for c in building_coords_raw]
 
-        # Compute facade features and entrance_t
+        # Compute single-edge facade features and entrance_t
         facade_feats, entrance_t = compute_facade_and_entrance_t(
             bld_lnglat,
             poi['entrance_lat'], poi['entrance_lon'],
-            poi.get('enclosing_roads', [])
+            poi.get('enclosing_roads', []),
         )
-
         if facade_feats is None:
             skipped['no_facade'] += 1
             continue
 
-        # Find best Mapillary image with S3 features
-        best_features = None
+        # Get single-edge facade geometry for camera pose and per-column facade_t
+        facade_geom = get_single_edge_facade_geometry(
+            bld_lnglat, poi['entrance_lat'], poi['entrance_lon']
+        )
+        if facade_geom is None:
+            skipped['no_facade'] += 1
+            continue
+
+        # Fetch features for up to K images
+        image_data = []
         for img_id in poi['mapillary_ids']:
+            if len(image_data) >= args.max_images_per_poi:
+                break
             img_id_str = str(img_id)
             if img_id_str not in seq_lookup:
                 continue
-
             seq_id = seq_lookup[img_id_str]
-            features = fetch_s3_features(s3, args.s3_bucket, seq_id, img_id_str)
-            if features is not None and features['cls_emb'] is not None:
-                best_features = features
-                break
+            features = fetch_image_features(s3, args.s3_bucket, seq_id, img_id_str)
+            if features is not None:
+                image_data.append((img_id_str, features))
 
-        if best_features is None:
+        if not image_data:
             skipped['no_s3'] += 1
             continue
 
-        # Compute keypoint stats
-        kp_stats = load_keypoint_stats(best_features['keypoints'])
-
-        # Normalize compass angle to [-1, 1]
-        compass = best_features['metadata'].get('compass_angle', 0.0)
-        compass_norm = (compass % 360) / 180.0 - 1.0
-
         # Save sample
-        sample_id = f"poi_{poi['id'][:8]}_{img_id_str}"
+        sample_id = f"v3se_poi_{poi['id'][:8]}"
         sample_dir = output_dir / sample_id
         sample_dir.mkdir(exist_ok=True)
 
-        np.save(sample_dir / 'cls_emb.npy', best_features['cls_emb'].astype(np.float32))
-        np.save(sample_dir / 'caption_emb.npy', best_features['caption_emb'].astype(np.float32))
-        np.save(sample_dir / 'kp_stats.npy', kp_stats)
         np.save(sample_dir / 'facade_feats.npy', facade_feats)
+
+        for k, (img_id_str, feat) in enumerate(image_data):
+            meta = feat['metadata']
+            cam_lat = meta['geometry']['lat']
+            cam_lon = meta['geometry']['lng']
+            cam_compass = meta.get('compass_angle', 0.0)
+            cam_type = meta.get('camera_type', 'perspective')
+            cam_params = meta.get('camera_parameters', [0.5, 0, 0])
+            img_w = meta.get('width', 4032)
+            img_h = meta.get('height', 3024)
+
+            hfov = camera_hfov_deg(cam_params, cam_type, img_w, img_h)
+
+            # Camera pose features (single edge)
+            pose = compute_camera_pose_features(
+                cam_lat, cam_lon, cam_compass, hfov,
+                facade_geom['facade_a_m'], facade_geom['facade_b_m'],
+                facade_geom['midpoint_m'], facade_geom['normal'],
+                facade_geom['centroid_lat'], facade_geom['centroid_lon'],
+            )
+
+            # Per-column facade_t (single edge)
+            ft_cols = compute_patch_column_facade_t(
+                cam_lat, cam_lon, cam_compass, hfov,
+                facade_geom['facade_a_m'], facade_geom['facade_b_m'],
+                facade_geom['centroid_lat'], facade_geom['centroid_lon'],
+                n_cols=N_COLS, camera_type=cam_type,
+            )
+
+            np.save(sample_dir / f'patch_strip_{k}.npy', feat['patch_strip'])
+            np.save(sample_dir / f'facade_t_cols_{k}.npy', ft_cols)
+            np.save(sample_dir / f'camera_pose_{k}.npy', pose)
+
+        # Save image metadata for evaluation
+        img_meta_list = []
+        for k, (img_id_str, feat) in enumerate(image_data):
+            meta = feat['metadata']
+            cam_type = meta.get('camera_type', 'perspective')
+            cam_params = meta.get('camera_parameters', [0.5, 0, 0])
+            img_w = meta.get('width', 4032)
+            img_h = meta.get('height', 3024)
+            img_meta_list.append({
+                'image_id': img_id_str,
+                'cam_lat': meta['geometry']['lat'],
+                'cam_lon': meta['geometry']['lng'],
+                'cam_compass': meta.get('compass_angle', 0.0),
+                'cam_type': cam_type,
+                'hfov': camera_hfov_deg(cam_params, cam_type, img_w, img_h),
+                'width': img_w,
+                'height': img_h,
+            })
+        with open(sample_dir / 'image_meta.json', 'w') as f:
+            json.dump(img_meta_list, f)
 
         manifest.append({
             'sample_id': sample_id,
             'poi_id': poi['id'],
             'poi_name': poi['name'],
-            'image_id': img_id_str,
-            'compass_normalized': float(compass_norm),
+            'n_images': len(image_data),
+            'image_ids': [d[0] for d in image_data],
             'entrance_t': float(entrance_t),
             'entrance_lat': poi['entrance_lat'],
             'entrance_lon': poi['entrance_lon'],
             'building_id': bld_id,
             'facade_length_m': float(facade_feats[4]),
             'has_rtk_label': poi.get('has_rtk_label', False),
+            'rtk_source': poi.get('rtk_source', ''),
+            'n_total_images': len(poi.get('mapillary_ids', [])),
         })
 
         if (i + 1) % 50 == 0:
             print(f"  Cached {len(manifest)} samples so far")
 
-    print(f"\nDataset preparation complete:")
+    print(f"\nDataset v3-singleedge preparation complete:")
     print(f"  Total samples: {len(manifest)}")
     print(f"  Skipped - no building: {skipped['no_building']}")
     print(f"  Skipped - no facade: {skipped['no_facade']}")
     print(f"  Skipped - no S3 data: {skipped['no_s3']}")
-    print(f"  Skipped - no features: {skipped['no_features']}")
 
-    # Split into train/val
-    # Strategy: RTK-labeled POIs go to val set (real ground truth for evaluation)
-    # Remaining POIs split by val_fraction for additional val samples
+    img_counts = [m['n_images'] for m in manifest]
+    print(f"  Images per POI: mean={np.mean(img_counts):.1f}, "
+          f"median={np.median(img_counts):.0f}, max={max(img_counts)}")
+
+    # Split: ALL RTK to val, non-RTK split by val_fraction
     rtk_samples = [m for m in manifest if m.get('has_rtk_label', False)]
     non_rtk_samples = [m for m in manifest if not m.get('has_rtk_label', False)]
-
     random.shuffle(non_rtk_samples)
-
-    if rtk_samples:
-        # RTK samples: 70% train (with real labels), 30% val (held out for eval)
-        random.shuffle(rtk_samples)
-        n_rtk_val = max(1, int(len(rtk_samples) * 0.3))
-        rtk_val = rtk_samples[:n_rtk_val]
-        rtk_train = rtk_samples[n_rtk_val:]
-
-        # Non-RTK: small fraction to val, rest to train
-        n_non_rtk_val = int(len(non_rtk_samples) * args.val_fraction)
-        non_rtk_val = non_rtk_samples[:n_non_rtk_val]
-        non_rtk_train = non_rtk_samples[n_non_rtk_val:]
-
-        val_manifest = rtk_val + non_rtk_val
-        train_manifest = rtk_train + non_rtk_train
-
-        print(f"\n  RTK samples: {len(rtk_samples)} ({len(rtk_train)} train, {len(rtk_val)} val)")
-        print(f"  Non-RTK samples: {len(non_rtk_samples)} ({len(non_rtk_train)} train, {len(non_rtk_val)} val)")
-    else:
-        n_val = int(len(manifest) * args.val_fraction)
-        val_manifest = non_rtk_samples[:n_val]
-        train_manifest = non_rtk_samples[n_val:]
+    n_non_rtk_val = int(len(non_rtk_samples) * args.val_fraction)
+    val_manifest = rtk_samples + non_rtk_samples[:n_non_rtk_val]
+    train_manifest = non_rtk_samples[n_non_rtk_val:]
+    print(f"\n  RTK: {len(rtk_samples)} (all in val)")
+    print(f"  Non-RTK: {len(non_rtk_samples)} "
+          f"({len(non_rtk_samples)-n_non_rtk_val} train, {n_non_rtk_val} val)")
 
     random.shuffle(train_manifest)
     random.shuffle(val_manifest)

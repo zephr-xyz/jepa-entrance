@@ -4,8 +4,8 @@ entrance locations for RTK-labeled POIs.
 
 Usage:
     python generate_map.py \
-        --checkpoint best_model_singleedge.pt \
-        --val-manifest val_manifest_singleedge.json \
+        --checkpoint best_model.pt \
+        --val-manifest val_manifest.json \
         --buildings-json /tmp/zephr-maps/data/buildings.json \
         --ground-truth-labels ground_truth_labels.json \
         --output entrance_predictions_map.html
@@ -88,7 +88,7 @@ def run_inference_cpu(checkpoint_path, val_manifest, cache_dir=None):
     """Run model inference on CPU for RTK samples. Returns dict of poi_id -> t_pred."""
     try:
         import torch
-        from model_v3 import JEPAEntranceV3
+        from model import JEPAEntranceV3
     except ImportError:
         print("PyTorch not available, skipping model inference")
         return None
@@ -112,7 +112,7 @@ def run_inference_cpu(checkpoint_path, val_manifest, cache_dir=None):
         print("No cache dir provided, cannot run inference")
         return None
 
-    from dataset_v3 import EntranceDatasetV3
+    from dataset import EntranceDatasetV3
     from torch.utils.data import DataLoader
 
     ds = EntranceDatasetV3(cache_dir, split='val')
@@ -317,7 +317,7 @@ def main():
     parser.add_argument('--buildings-json', required=True)
     parser.add_argument('--ground-truth-labels', required=True)
     parser.add_argument('--predictions-json', default='',
-                        help='Pre-computed predictions JSON from evaluate_v3.py')
+                        help='Pre-computed predictions JSON from evaluate.py')
     parser.add_argument('--output', default='entrance_predictions_map.html')
     args = parser.parse_args()
 

@@ -7,8 +7,8 @@ BUILDINGS=/home/ubuntu/buildings.json
 CORRECTIONS=/home/ubuntu/entrance_corrections.json
 GT_LABELS=$WORK/ground_truth_labels.json
 S3_INDEX=/home/ubuntu/s3_sequence_lookup.json
-CACHE=/home/ubuntu/dataset_cache_v3
-CHECKPOINTS=/home/ubuntu/checkpoints_v3
+CACHE=/home/ubuntu/dataset_cache
+CHECKPOINTS=/home/ubuntu/checkpoints
 
 echo "=== Step 1: Build S3 sequence index (if not cached) ==="
 if [ ! -f "$S3_INDEX" ]; then
@@ -18,8 +18,8 @@ if [ ! -f "$S3_INDEX" ]; then
 fi
 echo "S3 index: $(python3 -c "import json; print(len(json.load(open('$S3_INDEX'))), 'entries')")"
 
-echo "=== Step 2: Prepare v3 dataset (all samples, composite facade, RTK in val) ==="
-$PYTHON -u $WORK/prepare_dataset_v3.py \
+echo "=== Step 2: Prepare dataset (all samples, RTK in val) ==="
+$PYTHON -u $WORK/prepare_dataset.py \
     --tiles-dir $TILES \
     --buildings-json $BUILDINGS \
     --corrections-json $CORRECTIONS \
@@ -29,8 +29,8 @@ $PYTHON -u $WORK/prepare_dataset_v3.py \
     --max-images-per-poi 15 \
     --val-fraction 0.15
 
-echo "=== Step 3: Train JEPA v3 ==="
-$PYTHON -u $WORK/train_v3.py \
+echo "=== Step 3: Train JEPA ==="
+$PYTHON -u $WORK/train.py \
     --data-dir $CACHE \
     --output-dir $CHECKPOINTS \
     --epochs 300 \
@@ -43,8 +43,8 @@ $PYTHON -u $WORK/train_v3.py \
     --log-interval 10
 
 echo "=== Step 4: Sync results to S3 ==="
-aws s3 cp $CHECKPOINTS/ s3://zephr-mapillary-cache/jepa-entrance-v3/ --recursive
-aws s3 cp $CACHE/train_manifest.json s3://zephr-mapillary-cache/jepa-entrance-v3/train_manifest.json
-aws s3 cp $CACHE/val_manifest.json s3://zephr-mapillary-cache/jepa-entrance-v3/val_manifest.json
+aws s3 cp $CHECKPOINTS/ s3://zephr-mapillary-cache/jepa-entrance-v3-singleedge/ --recursive
+aws s3 cp $CACHE/train_manifest.json s3://zephr-mapillary-cache/jepa-entrance-v3-singleedge/train_manifest.json
+aws s3 cp $CACHE/val_manifest.json s3://zephr-mapillary-cache/jepa-entrance-v3-singleedge/val_manifest.json
 
 echo "=== Done ==="

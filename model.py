@@ -1,19 +1,12 @@
 """
 JEPA model for building entrance prediction.
 
-Adapted from LeWorldModel (Maes et al. 2026) — a stable end-to-end JEPA
-trained with only two losses: MSE prediction + SIGReg anti-collapse.
-
 Architecture:
-  Context Encoder: Fuses Mapillary visual features (DINOv2 CLS, patch
-    embeddings, caption embedding, keypoint stats) into a latent z_visual.
-  Target Encoder: Encodes facade geometry + true entrance position into z_geo.
-  Predictor: Maps z_visual → ẑ_geo, conditioned on facade geometry via AdaLN.
-  Entrance Head: Decodes ẑ_geo → predicted entrance parameter t ∈ [0, 1]
-    (fraction along the facade edge).
-
-Training loss:
-  L = MSE(ẑ_geo, z_geo) + λ·SIGReg(Z) + μ·MSE(t_pred, t_true)
+  Context Encoder: DINOv2 patch strip tokens (16 per image x K images) with
+    facade_t positional encoding + camera pose conditioning -> z_visual
+  Target Encoder: Facade geometry + true entrance_t -> z_geo
+  Predictor: z_visual -> z_geo_hat conditioned on facade via AdaLN
+  Entrance Head: z_geo_hat -> t_pred in [0, 1]
 """
 import math
 import torch
@@ -22,68 +15,41 @@ import torch.nn.functional as F
 
 
 # ---------------------------------------------------------------------------
-# SIGReg: Sketched Isotropic Gaussian Regularizer (from LeWM)
+# SIGReg
 # ---------------------------------------------------------------------------
 
 def sigreg(z: torch.Tensor, n_projections: int = 512) -> torch.Tensor:
-    """SIGReg anti-collapse regularizer.
-
-    Projects embeddings onto random unit directions and penalizes
-    deviation from a standard normal distribution using Epps-Pulley
-    test statistic. By Cramér-Wold theorem, matching all 1D marginals
-    matches the full joint distribution.
-
-    Args:
-        z: (B, D) batch of latent embeddings
-        n_projections: number of random projection directions M
-    Returns:
-        scalar loss (lower = more Gaussian)
-    """
     B, D = z.shape
     if B < 4:
         return torch.tensor(0.0, device=z.device)
 
-    # Standardize per-dimension
     z_std = (z - z.mean(dim=0, keepdim=True)) / (z.std(dim=0, keepdim=True) + 1e-8)
-
-    # Random unit-norm projection directions
     directions = torch.randn(D, n_projections, device=z.device)
     directions = F.normalize(directions, dim=0)
-
-    # Project: (B, M)
     projections = z_std @ directions
 
-    # Epps-Pulley test statistic per projection
-    # Simplified: penalize skewness and excess kurtosis of each projection
-    # (approximation of the full EP test for efficiency)
     mean_p = projections.mean(dim=0)
     var_p = projections.var(dim=0)
-    std_p = var_p.sqrt() + 1e-8
+    skew = ((projections - mean_p) ** 3).mean(dim=0) / (var_p + 1e-8) ** 1.5
+    kurt = ((projections - mean_p) ** 4).mean(dim=0) / (var_p + 1e-8) ** 2 - 3.0
 
-    centered = (projections - mean_p.unsqueeze(0)) / std_p.unsqueeze(0)
-    skew = (centered ** 3).mean(dim=0)
-    kurt = (centered ** 4).mean(dim=0) - 3.0  # excess kurtosis
+    loss_mean = mean_p.pow(2).mean()
+    loss_var = (var_p - 1).pow(2).mean()
+    loss_skew = skew.pow(2).mean()
+    loss_kurt = kurt.pow(2).mean()
 
-    # Combined normality penalty
-    loss = (skew ** 2).mean() + (kurt ** 2).mean() + ((var_p - 1.0) ** 2).mean()
-    return loss
+    return loss_mean + loss_var + 0.5 * loss_skew + 0.25 * loss_kurt
 
 
 # ---------------------------------------------------------------------------
-# Adaptive Layer Normalization (from LeWM predictor)
+# AdaLN
 # ---------------------------------------------------------------------------
 
 class AdaLN(nn.Module):
-    """Adaptive Layer Normalization conditioned on an external signal.
-    Used to inject facade geometry into the predictor (analogous to
-    how LeWM injects actions via AdaLN).
-    """
-
     def __init__(self, d_model: int, d_cond: int):
         super().__init__()
         self.norm = nn.LayerNorm(d_model)
         self.proj = nn.Linear(d_cond, 2 * d_model)
-        # Zero-init so conditioning has progressive effect (LeWM trick)
         nn.init.zeros_(self.proj.weight)
         nn.init.zeros_(self.proj.bias)
 
@@ -94,245 +60,263 @@ class AdaLN(nn.Module):
 
 
 # ---------------------------------------------------------------------------
-# Context Encoder — fuses multi-modal Mapillary features
+# Facade-t Positional Encoding
 # ---------------------------------------------------------------------------
 
-class ContextEncoder(nn.Module):
-    """Encodes Mapillary visual features into a latent representation.
+class FacadeTPositionalEncoding(nn.Module):
+    """Encode per-patch facade_t values into sinusoidal positional embeddings."""
+
+    def __init__(self, d_model: int, max_freq: int = 64):
+        super().__init__()
+        self.d_model = d_model
+        freqs = torch.exp(torch.arange(0, d_model, 2).float() * -(math.log(10000.0) / d_model))
+        self.register_buffer('freqs', freqs)
+
+    def forward(self, facade_t: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            facade_t: (B, N) values in [0, 1] or [-1, 2] (can be outside facade)
+        Returns:
+            (B, N, d_model) positional embeddings
+        """
+        # Scale to reasonable range for sinusoidal encoding
+        t = facade_t.unsqueeze(-1) * math.pi  # (B, N, 1)
+        pe = torch.zeros(*facade_t.shape, self.d_model, device=facade_t.device)
+        pe[..., 0::2] = torch.sin(t * self.freqs)
+        pe[..., 1::2] = torch.cos(t * self.freqs)
+        return pe
+
+
+# ---------------------------------------------------------------------------
+# Context Encoder v3 — patch-level with camera pose
+# ---------------------------------------------------------------------------
+
+class ContextEncoderV3(nn.Module):
+    """Encodes spatially-registered DINOv2 patch features from multiple viewpoints.
+
+    Per image:
+      - Horizontal patch strip: (16, 1024) — vertical average of 16x16 patch grid
+      - Per-column facade_t: (16,) — where each column looks on the facade
+      - Camera pose: (8,) — spatial relationship to facade
+
+    Fuses K images via transformer with facade_t positional encoding.
 
     Inputs:
-        cls_emb:     (B, 1024) DINOv2-large CLS token
-        caption_emb: (B, 768)  Gemma caption embedding
-        kp_stats:    (B, 16)   Keypoint statistics (count, spatial distribution)
-        compass:     (B, 1)    Camera compass angle (normalized)
+        patch_strips:  (B, K, 16, 1024)  DINOv2 horizontal strip per image
+        facade_t_cols: (B, K, 16)         facade_t for each patch column
+        camera_poses:  (B, K, 8)          camera-facade geometry per image
+        image_mask:    (B, K)             bool mask (True = valid image)
 
     Output:
-        z_visual:    (B, D)    Latent visual embedding
+        z_visual: (B, D) latent visual embedding
     """
 
-    def __init__(self, d_latent: int = 256, d_hidden: int = 512):
+    def __init__(self, d_latent: int = 128, d_hidden: int = 256,
+                 n_cols: int = 16, max_images: int = 5):
         super().__init__()
-        # Project each modality to common dimension
-        self.cls_proj = nn.Linear(1024, d_hidden)
-        self.caption_proj = nn.Linear(768, d_hidden)
-        self.kp_proj = nn.Linear(16, d_hidden)
-        self.compass_proj = nn.Linear(1, d_hidden)
+        self.n_cols = n_cols
+        self.max_images = max_images
+        self.d_hidden = d_hidden
 
-        # Fusion transformer
+        # Project patch features
+        self.patch_proj = nn.Linear(1024, d_hidden)
+
+        # Facade_t positional encoding
+        self.facade_t_pe = FacadeTPositionalEncoding(d_hidden)
+
+        # Camera pose projection (injected as a per-image token)
+        self.pose_proj = nn.Sequential(
+            nn.Linear(8, d_hidden),
+            nn.GELU(),
+            nn.Linear(d_hidden, d_hidden),
+        )
+
+        # Image-level token (like CLS, one per image to aggregate)
+        self.image_token = nn.Parameter(torch.randn(1, 1, d_hidden) * 0.02)
+
+        # Self-attention across all patch tokens from all images
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=d_hidden, nhead=8, dim_feedforward=d_hidden * 4,
             dropout=0.1, batch_first=True, activation='gelu'
         )
-        self.fusion = nn.TransformerEncoder(encoder_layer, num_layers=4)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=4)
 
-        # CLS token for aggregation
-        self.cls_token = nn.Parameter(torch.randn(1, 1, d_hidden) * 0.02)
+        # Global CLS token for final aggregation
+        self.global_cls = nn.Parameter(torch.randn(1, 1, d_hidden) * 0.02)
 
-        # Projection head (MLP + BatchNorm, per LeWM)
+        # Output projection
         self.projector = nn.Sequential(
             nn.Linear(d_hidden, d_latent),
             nn.BatchNorm1d(d_latent),
         )
 
-    def forward(self, cls_emb, caption_emb, kp_stats, compass):
-        B = cls_emb.shape[0]
+    def forward(self, patch_strips, facade_t_cols, camera_poses, image_mask):
+        B = patch_strips.shape[0]
+        K = patch_strips.shape[1]
 
-        # Project each modality to tokens
-        tokens = torch.stack([
-            self.cls_proj(cls_emb),
-            self.caption_proj(caption_emb),
-            self.kp_proj(kp_stats),
-            self.compass_proj(compass),
-        ], dim=1)  # (B, 4, H)
+        all_tokens = []
+        all_masks = []
 
-        # Prepend CLS token
-        cls = self.cls_token.expand(B, -1, -1)
-        tokens = torch.cat([cls, tokens], dim=1)  # (B, 5, H)
+        for k in range(K):
+            # Patch features: (B, 16, 1024) → (B, 16, H)
+            patches = self.patch_proj(patch_strips[:, k])  # (B, 16, H)
 
-        # Fuse
-        out = self.fusion(tokens)
-        z = out[:, 0]  # CLS output
+            # Add facade_t positional encoding
+            ft_pe = self.facade_t_pe(facade_t_cols[:, k])  # (B, 16, H)
+            patches = patches + ft_pe
+
+            # Camera pose token: (B, 8) → (B, 1, H)
+            pose_tok = self.pose_proj(camera_poses[:, k]).unsqueeze(1)  # (B, 1, H)
+
+            # Image aggregation token
+            img_tok = self.image_token.expand(B, -1, -1)  # (B, 1, H)
+
+            # Combine: [img_tok, pose_tok, patch_0, ..., patch_15]
+            img_tokens = torch.cat([img_tok, pose_tok, patches], dim=1)  # (B, 18, H)
+
+            # Mask: expand image_mask to token level
+            # image_mask[:, k] is True if image k is valid
+            valid = image_mask[:, k]  # (B,)
+            token_mask = ~valid.unsqueeze(1).expand(-1, 18)  # (B, 18) — True means IGNORE in PyTorch
+
+            all_tokens.append(img_tokens)
+            all_masks.append(token_mask)
+
+        # Prepend global CLS token
+        global_cls = self.global_cls.expand(B, -1, -1)
+        cls_mask = torch.zeros(B, 1, dtype=torch.bool, device=patch_strips.device)
+
+        # Concatenate across all images: (B, 1 + K*18, H)
+        tokens = torch.cat([global_cls] + all_tokens, dim=1)
+        mask = torch.cat([cls_mask] + all_masks, dim=1)
+
+        # Self-attention
+        out = self.transformer(tokens, src_key_padding_mask=mask)
+
+        # Extract global CLS
+        z = out[:, 0]  # (B, H)
 
         return self.projector(z)  # (B, D)
 
 
 # ---------------------------------------------------------------------------
-# Target Encoder — encodes facade geometry + entrance position
+# Target Encoder
 # ---------------------------------------------------------------------------
 
 class TargetEncoder(nn.Module):
-    """Encodes building facade geometry and entrance position.
-
-    Inputs:
-        facade_feats: (B, F) facade features:
-            - facade edge vertices (start_x, start_y, end_x, end_y in local meters)
-            - facade length, bearing
-            - building centroid offset
-            - road class encoding
-        entrance_t:   (B, 1) entrance position as fraction along facade [0, 1]
-
-    Output:
-        z_geo: (B, D) latent geospatial embedding
-    """
-
-    def __init__(self, d_facade: int = 32, d_latent: int = 256, d_hidden: int = 256):
+    def __init__(self, d_latent: int = 128, d_facade: int = 32):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(d_facade + 1, d_hidden),
+            nn.Linear(d_facade + 1, 256),
             nn.GELU(),
-            nn.Linear(d_hidden, d_hidden),
+            nn.Linear(256, 256),
             nn.GELU(),
-            nn.Linear(d_hidden, d_hidden),
-            nn.GELU(),
-        )
-        self.projector = nn.Sequential(
-            nn.Linear(d_hidden, d_latent),
+            nn.Linear(256, d_latent),
             nn.BatchNorm1d(d_latent),
         )
 
     def forward(self, facade_feats, entrance_t):
         x = torch.cat([facade_feats, entrance_t], dim=-1)
-        h = self.net(x)
-        return self.projector(h)
+        return self.net(x)
 
 
 # ---------------------------------------------------------------------------
-# Predictor — maps z_visual → ẑ_geo, conditioned on facade via AdaLN
+# Predictor with AdaLN
 # ---------------------------------------------------------------------------
 
 class Predictor(nn.Module):
-    """Predicts target geospatial embedding from visual context,
-    conditioned on facade geometry via AdaLN (analogous to LeWM's
-    action conditioning).
-
-    Input:
-        z_visual:     (B, D) from context encoder
-        facade_cond:  (B, F) facade geometry features (conditioning signal)
-    Output:
-        z_geo_pred:   (B, D) predicted target embedding
-    """
-
-    def __init__(self, d_latent: int = 256, d_facade: int = 32,
-                 n_layers: int = 6, n_heads: int = 8, dropout: float = 0.1):
+    def __init__(self, d_latent: int = 128, d_facade: int = 32, n_layers: int = 4):
         super().__init__()
-        self.input_proj = nn.Linear(d_latent, d_latent)
-
         self.layers = nn.ModuleList()
-        self.adaln_layers = nn.ModuleList()
         for _ in range(n_layers):
-            self.layers.append(nn.TransformerEncoderLayer(
-                d_model=d_latent, nhead=n_heads,
-                dim_feedforward=d_latent * 4,
-                dropout=dropout, batch_first=True, activation='gelu'
-            ))
-            self.adaln_layers.append(AdaLN(d_latent, d_facade))
+            self.layers.append(nn.ModuleDict({
+                'adaln': AdaLN(d_latent, d_facade),
+                'ffn': nn.Sequential(
+                    nn.Linear(d_latent, d_latent * 4),
+                    nn.GELU(),
+                    nn.Linear(d_latent * 4, d_latent),
+                ),
+            }))
 
-        self.projector = nn.Sequential(
-            nn.Linear(d_latent, d_latent),
-            nn.BatchNorm1d(d_latent),
-        )
-
-    def forward(self, z_visual, facade_cond):
-        x = self.input_proj(z_visual).unsqueeze(1)  # (B, 1, D)
-
-        for layer, adaln in zip(self.layers, self.adaln_layers):
-            x = layer(x)
-            x = adaln(x.squeeze(1), facade_cond).unsqueeze(1)
-
-        return self.projector(x.squeeze(1))
+    def forward(self, z_visual, facade_feats):
+        x = z_visual
+        for layer in self.layers:
+            x = layer['adaln'](x, facade_feats)
+            x = x + layer['ffn'](x)
+        return x
 
 
 # ---------------------------------------------------------------------------
-# Entrance Decode Head
+# Entrance Head
 # ---------------------------------------------------------------------------
 
 class EntranceHead(nn.Module):
-    """Decodes predicted geospatial embedding to entrance position t ∈ [0,1]."""
-
-    def __init__(self, d_latent: int = 256):
+    def __init__(self, d_latent: int = 128):
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(d_latent, 128),
+            nn.Linear(d_latent, d_latent),
             nn.GELU(),
-            nn.Linear(128, 64),
+            nn.Linear(d_latent, d_latent // 2),
             nn.GELU(),
-            nn.Linear(64, 1),
+            nn.Linear(d_latent // 2, 1),
             nn.Sigmoid(),
         )
 
-    def forward(self, z_geo):
-        return self.net(z_geo)
+    def forward(self, z):
+        return self.net(z)
 
 
 # ---------------------------------------------------------------------------
-# Full JEPA Entrance Model
+# Full JEPA v3 Model
 # ---------------------------------------------------------------------------
 
-class JEPAEntrance(nn.Module):
-    """Full JEPA model for entrance prediction.
-
-    Follows LeWM's two-loss training:
-      L = MSE(ẑ_geo, z_geo) + λ·SIGReg(Z) + μ·MSE(t_pred, t_true)
-    """
-
-    def __init__(self, d_latent: int = 256, d_facade: int = 32,
-                 lambda_sigreg: float = 0.1, mu_entrance: float = 1.0):
+class JEPAEntranceV3(nn.Module):
+    def __init__(self, d_latent: int = 128, d_facade: int = 32,
+                 lambda_sigreg: float = 0.05, mu_entrance: float = 10.0,
+                 max_images: int = 5):
         super().__init__()
-        self.context_encoder = ContextEncoder(d_latent=d_latent)
-        self.target_encoder = TargetEncoder(d_facade=d_facade, d_latent=d_latent)
-        self.predictor = Predictor(d_latent=d_latent, d_facade=d_facade)
-        self.entrance_head = EntranceHead(d_latent=d_latent)
-
         self.lambda_sigreg = lambda_sigreg
         self.mu_entrance = mu_entrance
 
-    def forward(self, cls_emb, caption_emb, kp_stats, compass,
+        self.context_encoder = ContextEncoderV3(
+            d_latent=d_latent, d_hidden=d_latent * 2,
+            max_images=max_images,
+        )
+        self.target_encoder = TargetEncoder(d_latent=d_latent, d_facade=d_facade)
+        self.predictor = Predictor(d_latent=d_latent, d_facade=d_facade, n_layers=4)
+        self.entrance_head = EntranceHead(d_latent=d_latent)
+
+    def forward(self, patch_strips, facade_t_cols, camera_poses, image_mask,
                 facade_feats, entrance_t):
-        """Full forward pass for training.
+        # Context: visual features → z_visual
+        z_visual = self.context_encoder(
+            patch_strips, facade_t_cols, camera_poses, image_mask
+        )
 
-        Returns dict with losses and predictions.
-        """
-        # Encode visual context
-        z_visual = self.context_encoder(cls_emb, caption_emb, kp_stats, compass)
-
-        # Encode target (facade + true entrance)
+        # Target: facade + entrance → z_geo
         z_geo = self.target_encoder(facade_feats, entrance_t)
 
-        # Predict target from visual context, conditioned on facade
+        # Predict: z_visual → ẑ_geo
         z_geo_pred = self.predictor(z_visual, facade_feats)
 
-        # Decode entrance position
+        # Entrance decode
         t_pred = self.entrance_head(z_geo_pred)
 
-        # --- Losses (LeWM style) ---
-        # 1. Prediction loss: MSE in latent space
+        # Losses
         loss_pred = F.mse_loss(z_geo_pred, z_geo)
-
-        # 2. SIGReg on both embedding spaces
         loss_sigreg = sigreg(z_visual) + sigreg(z_geo)
-
-        # 3. Entrance position loss (auxiliary decode supervision)
         loss_entrance = F.mse_loss(t_pred, entrance_t)
 
-        # Total loss (LeWM Eq. 3 + entrance decode)
-        loss = loss_pred + self.lambda_sigreg * loss_sigreg + self.mu_entrance * loss_entrance
+        loss = (loss_pred
+                + self.lambda_sigreg * loss_sigreg
+                + self.mu_entrance * loss_entrance)
 
         return {
             'loss': loss,
             'loss_pred': loss_pred.item(),
             'loss_sigreg': loss_sigreg.item(),
             'loss_entrance': loss_entrance.item(),
-            'z_visual': z_visual,
-            'z_geo': z_geo,
-            'z_geo_pred': z_geo_pred,
-            't_pred': t_pred,
+            't_pred': t_pred.detach(),
+            'z_visual': z_visual.detach(),
+            'z_geo': z_geo.detach(),
         }
-
-    @torch.no_grad()
-    def predict_entrance(self, cls_emb, caption_emb, kp_stats, compass,
-                         facade_feats):
-        """Inference: predict entrance position from visual features + facade."""
-        z_visual = self.context_encoder(cls_emb, caption_emb, kp_stats, compass)
-        z_geo_pred = self.predictor(z_visual, facade_feats)
-        t_pred = self.entrance_head(z_geo_pred)
-        return t_pred

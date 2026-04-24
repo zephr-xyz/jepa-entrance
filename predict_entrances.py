@@ -9,7 +9,7 @@ For each POI:
 Usage:
     python predict_entrances.py \
         --checkpoint best_model_se.pt \
-        --data-dir cache_v3_se \
+        --data-dir cache \
         --buildings-json buildings.json \
         --output updated_entrances.json
 """
@@ -21,8 +21,8 @@ import torch
 from torch.utils.data import DataLoader
 from pathlib import Path
 
-from model_v3 import JEPAEntranceV3
-from dataset_v3 import EntranceDatasetV3
+from model import JEPAEntranceV3
+from dataset import EntranceDatasetV3
 from geometry import find_facade_edge
 
 DEG_TO_RAD = math.pi / 180
