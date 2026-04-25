@@ -13,6 +13,7 @@ Training augmentation: when n_total_images > MAX_IMAGES, randomly
 sample a different subset of images each time __getitem__ is called.
 """
 import json
+import math
 import numpy as np
 import torch
 from torch.utils.data import Dataset
@@ -22,6 +23,143 @@ from pathlib import Path
 MAX_IMAGES = 5
 N_COLS = 16
 PATCH_DIM = 1024
+DEG_TO_RAD = math.pi / 180
+METERS_PER_DEG_LAT = 111320
+
+
+def compute_facade_and_entrance_t(building_coords, entrance_lat, entrance_lon,
+                                  enclosing_roads=None):
+    """Compute 32-d facade feature vector and entrance_t for a POI.
+
+    Args:
+        building_coords: list of [lon, lat] ring coordinates
+        entrance_lat, entrance_lon: entrance position
+        enclosing_roads: list of road geometries (unused currently, reserved)
+
+    Returns:
+        (facade_feats, entrance_t) or (None, None) if no valid facade found.
+        facade_feats: (32,) float32 — facade geometry encoding
+            [0-1]: facade endpoint A (local meters, /50)
+            [2-3]: facade endpoint B (local meters, /50)
+            [4]:   facade length (meters)
+            [5-6]: facade midpoint (local meters, /50)
+            [7-8]: outward normal (unit vector)
+            [9-10]: facade bearing sin/cos
+            [11-12]: entrance position (local meters, /50)
+            [13]: entrance perpendicular distance to facade (/50)
+            [14]: building perimeter (/200)
+            [15]: building area (/2000)
+            [16]: number of edges (/20)
+            [17-18]: building bbox aspect ratio (w/h, h/w)
+            [19-23]: road features (reserved zeros)
+            [24-31]: padding zeros
+        entrance_t: float in [0, 1] — position along facade edge
+    """
+    if len(building_coords) < 3:
+        return None, None
+
+    cent_lng = sum(c[0] for c in building_coords) / len(building_coords)
+    cent_lat = sum(c[1] for c in building_coords) / len(building_coords)
+    cos_lat = math.cos(cent_lat * DEG_TO_RAD)
+    m_per_deg_lng = METERS_PER_DEG_LAT * cos_lat
+
+    def to_m(coord):
+        return [(coord[0] - cent_lng) * m_per_deg_lng,
+                (coord[1] - cent_lat) * METERS_PER_DEG_LAT]
+
+    fp_m = [to_m(c) for c in building_coords]
+    ent_m = to_m([entrance_lon, entrance_lat])
+    poly_cx = sum(p[0] for p in fp_m) / len(fp_m)
+    poly_cy = sum(p[1] for p in fp_m) / len(fp_m)
+
+    best_edge = None
+    best_score = float('inf')
+
+    for i in range(len(fp_m) - 1):
+        a, b = fp_m[i], fp_m[i + 1]
+        edx, edy = b[0] - a[0], b[1] - a[1]
+        length = math.sqrt(edx * edx + edy * edy)
+        if length < 0.3:
+            continue
+
+        nx, ny = -edy / length, edx / length
+        mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+        tcx, tcy = poly_cx - mx, poly_cy - my
+        if nx * tcx + ny * tcy > 0:
+            nx, ny = -nx, -ny
+
+        dx = ent_m[0] - mx
+        dy = ent_m[1] - my
+        dist = math.sqrt(dx * dx + dy * dy)
+
+        if dist < best_score:
+            best_score = dist
+            best_edge = {
+                'a': a, 'b': b, 'length': length,
+                'normal': [nx, ny],
+                'midpoint': [mx, my],
+            }
+
+    if best_edge is None:
+        return None, None
+
+    a = best_edge['a']
+    b = best_edge['b']
+    facade_len = best_edge['length']
+    mid = best_edge['midpoint']
+    normal = best_edge['normal']
+
+    # entrance_t: project entrance onto facade edge
+    fx, fy = b[0] - a[0], b[1] - a[1]
+    ex, ey = ent_m[0] - a[0], ent_m[1] - a[1]
+    t = (ex * fx + ey * fy) / (facade_len * facade_len)
+    entrance_t = max(0.0, min(1.0, t))
+
+    # Facade bearing
+    bearing_rad = math.atan2(fx, fy)
+
+    # Entrance perpendicular distance to facade line
+    ent_perp = (ex * fy - ey * fx) / facade_len
+
+    # Building geometry stats
+    perimeter = 0.0
+    n_edges = 0
+    for i in range(len(fp_m) - 1):
+        dx = fp_m[i + 1][0] - fp_m[i][0]
+        dy = fp_m[i + 1][1] - fp_m[i][1]
+        perimeter += math.sqrt(dx * dx + dy * dy)
+        n_edges += 1
+
+    xs = [p[0] for p in fp_m]
+    ys = [p[1] for p in fp_m]
+    bbox_w = max(xs) - min(xs)
+    bbox_h = max(ys) - min(ys)
+    area = abs(sum(fp_m[i][0] * fp_m[(i + 1) % len(fp_m)][1] -
+                   fp_m[(i + 1) % len(fp_m)][0] * fp_m[i][1]
+                   for i in range(len(fp_m)))) / 2.0
+
+    feats = np.zeros(32, dtype=np.float32)
+    feats[0] = a[0] / 50.0
+    feats[1] = a[1] / 50.0
+    feats[2] = b[0] / 50.0
+    feats[3] = b[1] / 50.0
+    feats[4] = facade_len
+    feats[5] = mid[0] / 50.0
+    feats[6] = mid[1] / 50.0
+    feats[7] = normal[0]
+    feats[8] = normal[1]
+    feats[9] = math.sin(bearing_rad)
+    feats[10] = math.cos(bearing_rad)
+    feats[11] = ent_m[0] / 50.0
+    feats[12] = ent_m[1] / 50.0
+    feats[13] = ent_perp / 50.0
+    feats[14] = perimeter / 200.0
+    feats[15] = area / 2000.0
+    feats[16] = n_edges / 20.0
+    feats[17] = (bbox_w / max(bbox_h, 0.1))
+    feats[18] = (bbox_h / max(bbox_w, 0.1))
+
+    return feats, entrance_t
 
 
 class EntranceDatasetV3(Dataset):
