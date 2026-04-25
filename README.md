@@ -2,6 +2,8 @@
 
 Predicting building entrance locations from Mapillary street-level imagery using a Joint-Embedding Predictive Architecture (JEPA).
 
+**[Interactive 3D Viewer](https://zephr-xyz.github.io/jepa-entrance/)** -- ray-traced entrance predictions with occluded examples
+
 ## Overview
 
 Given a building and its associated Mapillary images, the model predicts where the entrance is along the building's road-facing facade. The prediction is parameterized as `t ∈ [0, 1]`, representing the fractional position along the facade edge, which is then converted to geographic coordinates.
