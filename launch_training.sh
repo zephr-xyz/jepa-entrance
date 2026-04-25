@@ -27,6 +27,7 @@ $PYTHON -u $WORK/prepare_dataset.py \
     --s3-index-cache $S3_INDEX \
     --output-dir $CACHE \
     --max-images-per-poi 15 \
+    --min-facade-cols 4 \
     --val-fraction 0.15
 
 echo "=== Step 3: Train JEPA ==="

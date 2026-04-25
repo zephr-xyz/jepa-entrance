@@ -25,6 +25,7 @@ DEG_TO_RAD = math.pi / 180
 METERS_PER_DEG_LAT = 111320
 MAX_IMAGES = 15
 N_COLS = 16
+MIN_FACADE_COLS = 4  # require at least 4/16 columns to hit the facade
 
 
 def load_embedding_tiles(tiles_dir):
@@ -197,6 +198,8 @@ def main():
     parser.add_argument('--s3-index-cache', default='')
     parser.add_argument('--output-dir', required=True)
     parser.add_argument('--max-images-per-poi', type=int, default=MAX_IMAGES)
+    parser.add_argument('--min-facade-cols', type=int, default=MIN_FACADE_COLS,
+                        help='Min columns hitting facade to keep an image (default: 4/16)')
     parser.add_argument('--val-fraction', type=float, default=0.15)
     parser.add_argument('--seed', type=int, default=42)
     args = parser.parse_args()
@@ -250,6 +253,8 @@ def main():
 
     manifest = []
     skipped = {'no_building': 0, 'no_facade': 0, 'no_s3': 0}
+    total_images_before_filter = 0
+    total_images_after_filter = 0
 
     for i, poi in enumerate(pois):
         if i % 100 == 0:
@@ -303,14 +308,13 @@ def main():
             skipped['no_s3'] += 1
             continue
 
-        # Save sample
-        sample_id = f"v3se_poi_{poi['id'][:8]}"
-        sample_dir = output_dir / sample_id
-        sample_dir.mkdir(exist_ok=True)
-
-        np.save(sample_dir / 'facade_feats.npy', facade_feats)
-
-        for k, (img_id_str, feat) in enumerate(image_data):
+        # Compute geometry for each image and filter to those
+        # that actually see the facade (confirmed/likely views).
+        # Images where fewer than MIN_FACADE_COLS columns hit the
+        # facade edge are not facing the building and would add
+        # noise to the training signal.
+        filtered_data = []
+        for img_id_str, feat in image_data:
             meta = feat['metadata']
             cam_lat = meta['geometry']['lat']
             cam_lon = meta['geometry']['lng']
@@ -322,7 +326,6 @@ def main():
 
             hfov = camera_hfov_deg(cam_params, cam_type, img_w, img_h)
 
-            # Camera pose features (single edge)
             pose = compute_camera_pose_features(
                 cam_lat, cam_lon, cam_compass, hfov,
                 facade_geom['facade_a_m'], facade_geom['facade_b_m'],
@@ -330,7 +333,6 @@ def main():
                 facade_geom['centroid_lat'], facade_geom['centroid_lon'],
             )
 
-            # Per-column facade_t (single edge)
             ft_cols = compute_patch_column_facade_t(
                 cam_lat, cam_lon, cam_compass, hfov,
                 facade_geom['facade_a_m'], facade_geom['facade_b_m'],
@@ -338,18 +340,38 @@ def main():
                 n_cols=N_COLS, camera_type=cam_type,
             )
 
+            n_hitting = int(np.sum((ft_cols >= 0) & (ft_cols <= 1)))
+            facing = pose[7]  # facing_facade flag from camera pose features
+
+            if n_hitting < args.min_facade_cols and facing < 0.5:
+                continue
+
+            filtered_data.append((img_id_str, feat, pose, ft_cols))
+
+        if not filtered_data:
+            skipped['no_s3'] += 1
+            continue
+
+        # Save sample
+        sample_id = f"v3se_poi_{poi['id'][:8]}"
+        sample_dir = output_dir / sample_id
+        sample_dir.mkdir(exist_ok=True)
+
+        np.save(sample_dir / 'facade_feats.npy', facade_feats)
+
+        for k, (img_id_str, feat, pose, ft_cols) in enumerate(filtered_data):
             np.save(sample_dir / f'patch_strip_{k}.npy', feat['patch_strip'])
             np.save(sample_dir / f'facade_t_cols_{k}.npy', ft_cols)
             np.save(sample_dir / f'camera_pose_{k}.npy', pose)
 
-        # Save image metadata for evaluation
         img_meta_list = []
-        for k, (img_id_str, feat) in enumerate(image_data):
+        for k, (img_id_str, feat, pose, ft_cols) in enumerate(filtered_data):
             meta = feat['metadata']
             cam_type = meta.get('camera_type', 'perspective')
             cam_params = meta.get('camera_parameters', [0.5, 0, 0])
             img_w = meta.get('width', 4032)
             img_h = meta.get('height', 3024)
+            n_hitting = int(np.sum((ft_cols >= 0) & (ft_cols <= 1)))
             img_meta_list.append({
                 'image_id': img_id_str,
                 'cam_lat': meta['geometry']['lat'],
@@ -359,16 +381,21 @@ def main():
                 'hfov': camera_hfov_deg(cam_params, cam_type, img_w, img_h),
                 'width': img_w,
                 'height': img_h,
+                'n_facade_cols': n_hitting,
             })
         with open(sample_dir / 'image_meta.json', 'w') as f:
             json.dump(img_meta_list, f)
+
+        total_images_before_filter += len(image_data)
+        total_images_after_filter += len(filtered_data)
 
         manifest.append({
             'sample_id': sample_id,
             'poi_id': poi['id'],
             'poi_name': poi['name'],
-            'n_images': len(image_data),
-            'image_ids': [d[0] for d in image_data],
+            'n_images': len(filtered_data),
+            'n_images_unfiltered': len(image_data),
+            'image_ids': [d[0] for d in filtered_data],
             'entrance_t': float(entrance_t),
             'entrance_lat': poi['entrance_lat'],
             'entrance_lon': poi['entrance_lon'],
@@ -382,11 +409,15 @@ def main():
         if (i + 1) % 50 == 0:
             print(f"  Cached {len(manifest)} samples so far")
 
-    print(f"\nDataset v3-singleedge preparation complete:")
+    pct_filtered = (1 - total_images_after_filter / max(total_images_before_filter, 1)) * 100
+    print(f"\nDataset preparation complete:")
     print(f"  Total samples: {len(manifest)}")
     print(f"  Skipped - no building: {skipped['no_building']}")
     print(f"  Skipped - no facade: {skipped['no_facade']}")
-    print(f"  Skipped - no S3 data: {skipped['no_s3']}")
+    print(f"  Skipped - no S3 data / no facade-facing images: {skipped['no_s3']}")
+    print(f"  Image filter (min {args.min_facade_cols}/16 cols): "
+          f"{total_images_before_filter} -> {total_images_after_filter} "
+          f"({pct_filtered:.1f}% removed)")
 
     img_counts = [m['n_images'] for m in manifest]
     print(f"  Images per POI: mean={np.mean(img_counts):.1f}, "
