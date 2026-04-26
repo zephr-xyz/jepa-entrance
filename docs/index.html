@@ -330,7 +330,7 @@ function updateMap() {
     });
 
     const predPos = [poi.entrance_pred[1], poi.entrance_pred[0]];
-    const truePos = [poi.entrance_true[1], poi.entrance_true[0]];
+    const truePos = [poi.rtk_point[1], poi.rtk_point[0]];
 
     const beamLayer = new deck.LineLayer({
         id: 'beams',
