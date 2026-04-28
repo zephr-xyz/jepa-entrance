@@ -39,7 +39,7 @@ The model follows a JEPA (Joint-Embedding Predictive Architecture) training para
 ┌──────────────────────────────────────────────────┐
 │               Predictor (AdaLN)                  │
 │  z_visual → z_geo_hat, conditioned on facade     │
-│  → Entrance Head: z_geo_hat → t_pred ∈ [0,1]    │
+│  → Entrance Head: z_geo_hat → t_pred ∈ [0,1]     │
 └──────────────────────────────────────────────────┘
                         ↕ MSE loss
 ┌──────────────────────────────────────────────────┐
