@@ -227,7 +227,7 @@ function updateSidePanel() {
         img.rays.forEach(r => { cols += `<div class="img-col ${r.hit ? 'hit' : 'miss'}"></div>`; });
         card.innerHTML = `
             <div style="position:relative">
-                <img src="${img.thumb_url}" loading="lazy" alt="View ${i+1}">
+                <img src="images/${img.image_id}.jpg" loading="lazy" alt="View ${i+1}">
                 <div class="img-overlay">${cols}</div>
             </div>
             <div class="img-meta">
