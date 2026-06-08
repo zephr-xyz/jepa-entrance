@@ -4,6 +4,15 @@ Predicting building entrance locations from Mapillary street-level imagery using
 
 **[Interactive 3D Viewer](https://zephr-xyz.github.io/jepa-entrance/)** -- ray-traced entrance predictions with occluded examples
 
+> **Viewer image maintenance:** the sidebar thumbnails are served from
+> `docs/images/<image_id>.jpg` (committed to the repo), referenced by local
+> path in `docs/index.html`. **Do not** point `<img src>` at Mapillary /
+> `scontent*.fbcdn.net` CDN URLs -- those are signed and expire after a few
+> weeks (the `oe=` param is the expiry), which silently breaks the published
+> site. When you add POIs/images to the viewer, run
+> `MAPILLARY_TOKEN='MLY|...' python3 docs/download_images.py` to fetch the new
+> thumbnails locally, then commit them.
+
 ## Overview
 
 Given a building and its associated Mapillary images, the model predicts where the entrance is along the building's road-facing facade. The prediction is parameterized as `t ∈ [0, 1]`, representing the fractional position along the facade edge, which is then converted to geographic coordinates.
@@ -189,6 +198,8 @@ python generate_map.py \
 | `create_entrance_map.py` | Comparison map of predicted vs ground truth entrances |
 | `ground_truth_labels.json` | 72 RTK ground truth labels (41 Louisville + 31 Boulder) |
 | `launch_training.sh` | End-to-end training pipeline for EC2 |
+| `docs/index.html` | Interactive 3D deck.gl viewer (GitHub Pages site) |
+| `docs/download_images.py` | Fetches viewer thumbnails into `docs/images/` so they never expire |
 
 ## S3 Data
 
